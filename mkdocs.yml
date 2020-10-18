@@ -1,0 +1,14 @@
+site_name: Django-Rest-Durin
+repo_url: https://github.com/eshaan7/django-rest-durin
+theme: readthedocs
+nav:
+  - Home: 'index.md'
+  - Installation: 'installation.md'
+  - API Guide:
+      - Views: 'views.md'
+      - URLs: 'urls.md'
+      - Authentication: 'auth.md'
+      - Settings: 'settings.md'
+  - Changelog: 'changelog.md'
+
+dev_addr: !!python/object/apply:os.getenv ["MKDOCS_DEV_ADDR"]
