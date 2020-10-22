@@ -59,7 +59,8 @@ class LoginView(APIView):
             # a token for this user and client already exists,
             # so we can return the same one by renewing it's expiry
             instance = AuthToken.objects.get(user=request.user, client=client)
-            instance.renew_token(renewed_by=self.__class__)
+            if durin_settings.REFRESH_TOKEN_ON_USE:
+                instance.renew_token(renewed_by=self.__class__)
         except ObjectDoesNotExist:
             # create new token
             instance = self.get_new_token(request.user, client)
