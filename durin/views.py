@@ -33,7 +33,7 @@ class LoginView(APIView):
         return serializer.validated_data["user"]
 
     @staticmethod
-    def get_token_client(request):
+    def get_client_obj(request) -> "Client":
         client_name = request.data.get("client", None)
         if not client_name:
             raise ParseError("No client specified.", status.HTTP_400_BAD_REQUEST)
@@ -44,38 +44,42 @@ class LoginView(APIView):
         datetime_format = durin_settings.EXPIRY_DATETIME_FORMAT
         return DateTimeField(format=datetime_format).to_representation(expiry)
 
-    def get_post_response_data(self, request, instance):
+    def get_post_response_data(self, request, token_obj: "AuthToken"):
         UserSerializer = durin_settings.USER_SERIALIZER
 
         data = {
-            "expiry": self.format_expiry_datetime(instance.expiry),
-            "token": instance.token,
+            "expiry": self.format_expiry_datetime(token_obj.expiry),
+            "token": token_obj.token,
         }
         if UserSerializer is not None:
             data["user"] = UserSerializer(request.user, context=self.get_context()).data
         return data
 
-    @staticmethod
-    def get_new_token(user, client):
-        return AuthToken.objects.create(user, client)
+    @classmethod
+    def renew_token(cls, token_obj: "AuthToken"):
+        token_obj.renew_token(renewed_by=cls)
 
-    def post(self, request, format=None):
-        request.user = self.validate_and_return_user(request)
-        client = self.get_token_client(request)
+    @classmethod
+    def get_token_obj(cls, request, client: "Client") -> "AuthToken":
         try:
-            # a token for this user and client already exists,
-            # so we can return the same one by renewing it's expiry
-            instance = AuthToken.objects.get(user=request.user, client=client)
-            if durin_settings.REFRESH_TOKEN_ON_USE:
-                instance.renew_token(renewed_by=self.__class__)
+            # a token for this user and client already exists, so we can just return it
+            token = AuthToken.objects.get(user=request.user, client=client)
+            if durin_settings.REFRESH_TOKEN_ON_LOGIN:
+                cls.renew_token(token)
         except ObjectDoesNotExist:
             # create new token
-            instance = self.get_new_token(request.user, client)
+            token = AuthToken.objects.create(request.user, client)
 
+        return token
+
+    def post(self, request, *args, **kwargs):
+        request.user = self.validate_and_return_user(request)
+        client = self.get_client_obj(request)
+        token_obj = self.get_token_obj(request, client)
         user_logged_in.send(
             sender=request.user.__class__, request=request, user=request.user
         )
-        data = self.get_post_response_data(request, instance)
+        data = self.get_post_response_data(request, token_obj)
         return Response(data)
 
 
@@ -92,7 +96,7 @@ class RefreshView(APIView):
         datetime_format = durin_settings.EXPIRY_DATETIME_FORMAT
         return DateTimeField(format=datetime_format).to_representation(expiry)
 
-    def post(self, request, format=None):
+    def post(self, request, *args, **kwargs):
         auth_token = request._auth
         new_expiry = auth_token.renew_token(renewed_by=self.__class__)
         new_expiry_repr = self.format_expiry_datetime(new_expiry)
@@ -109,7 +113,7 @@ class LogoutView(APIView):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
 
-    def post(self, request, format=None):
+    def post(self, request, *args, **kwargs):
         request._auth.delete()
         user_logged_out.send(
             sender=request.user.__class__, request=request, user=request.user
@@ -126,7 +130,7 @@ class LogoutAllView(APIView):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
 
-    def post(self, request, format=None):
+    def post(self, request, *args, **kwargs):
         request.user.auth_token_set.all().delete()
         user_logged_out.send(
             sender=request.user.__class__, request=request, user=request.user
