@@ -24,12 +24,11 @@ logoutall_url = reverse("durin_logoutall")
 refresh_url = reverse("durin_refresh")
 
 new_settings = durin_settings.defaults.copy()
-EXPIRY_DATETIME_FORMAT = "%H:%M %d/%m/%y"
-new_settings["EXPIRY_DATETIME_FORMAT"] = EXPIRY_DATETIME_FORMAT
 
 
 class AuthTestCase(APITestCase):
     def setUp(self):
+        self.authclient = Client.objects.create(name="authclientfortest")
         username = "john.doe"
         email = "john.doe@example.com"
         password = "hunter2"
@@ -37,7 +36,7 @@ class AuthTestCase(APITestCase):
         self.creds = {
             "username": username,
             "password": password,
-            "client": "authclientfortest",
+            "client": self.authclient.name,
         }
 
         username2 = "jane.doe"
@@ -47,11 +46,10 @@ class AuthTestCase(APITestCase):
         self.creds2 = {
             "username": username2,
             "password": password2,
-            "client": "authclientfortest",
+            "client": self.authclient.name,
         }
 
         self.client_names = ["web", "mobile", "cli"]
-        self.authclient = Client.objects.create(name="authclientfortest")
 
     def test_create_clients(self):
         self.assertEqual(Client.objects.count(), 1)
@@ -114,7 +112,8 @@ class AuthTestCase(APITestCase):
 
     def test_login_returns_configured_expiry_datetime_format(self):
         self.assertEqual(AuthToken.objects.count(), 0)
-
+        EXPIRY_DATETIME_FORMAT = "%H:%M %d/%m/%y"
+        new_settings["EXPIRY_DATETIME_FORMAT"] = EXPIRY_DATETIME_FORMAT
         with override_settings(REST_DURIN=new_settings):
             reload(views)
             self.assertEqual(
@@ -267,7 +266,7 @@ class AuthTestCase(APITestCase):
         resp2 = self.client.get(root_url)
         self.assertEqual(resp2.status_code, 401)
 
-    def test_login_should_renew_token_for_existing_client(self):
+    def test_login_same_token_existing_client(self):
         self.assertEqual(AuthToken.objects.count(), 0)
         resp1 = self.client.post(login_url, self.creds, format="json")
         self.assertEqual(resp1.status_code, 200)
@@ -281,15 +280,44 @@ class AuthTestCase(APITestCase):
             1,
             "should renew token, instead of creating new.",
         )
-        self.assertNotEqual(
+        self.assertEqual(
             resp1.data["expiry"],
             resp2.data["expiry"],
-            "token expiry should be renewed by login",
+            "token expiry should be same after login",
         )
         self.assertEqual(
             resp1.data["token"],
             resp2.data["token"],
             "login should return existing token",
+        )
+
+    def test_login_renew_token_existing_client(self):
+        self.assertEqual(AuthToken.objects.count(), 0)
+        new_settings["REFRESH_TOKEN_ON_LOGIN"] = True
+        with override_settings(REST_DURIN=new_settings):
+            reload(views)
+            resp1 = self.client.post(login_url, self.creds, format="json")
+            self.assertEqual(resp1.status_code, 200)
+            self.assertIn("token", resp1.data)
+            resp2 = self.client.post(login_url, self.creds, format="json")
+            self.assertEqual(resp2.status_code, 200)
+            self.assertIn("token", resp2.data)
+
+        reload(views)
+        self.assertEqual(
+            AuthToken.objects.count(),
+            1,
+            "should renew token, instead of creating new.",
+        )
+        self.assertNotEqual(
+            resp1.data["expiry"],
+            resp2.data["expiry"],
+            "token expiry should be renewed after login",
+        )
+        self.assertEqual(
+            resp1.data["token"],
+            resp2.data["token"],
+            "token key must remain same",
         )
 
     def test_refresh_view_and_renewed_signal(self):
