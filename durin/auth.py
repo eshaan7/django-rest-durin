@@ -17,14 +17,18 @@ except ImportError:
 
 class TokenAuthentication(BaseAuthentication):
     """
-    This authentication scheme uses Durin AuthTokens for authentication.
+    This authentication scheme uses Durin's
+    :class:`durin.models.AuthToken` for authentication.
 
-    Similar to DRF's TokenAuthentication, it overrides it a bit to
+    Similar to `DRF's authentication system
+    <http://www.django-rest-framework.org/api-guide/authentication/>`__,
+    it overrides it a bit to
     accomodate that tokens can be expired.
 
-    If successful
-    - `request.user` will be a django `User` instance
-    - `request.auth` will be an `AuthToken` instance
+    If successful,
+
+    - ``request.user`` will be a django ``User`` instance
+    - ``request.auth`` will be an ``AuthToken`` instance
     """
 
     model = AuthToken
@@ -88,7 +92,23 @@ if memoize:
 
     class CachedTokenAuthentication(TokenAuthentication):
         """
-        Cached TokenAuthentication, using django-memoize
+        Similar to ``TokenAuthentication`` but uses
+        `django-memoize <https://pythonhosted.org/django-memoize/>`__
+        as cache backend for faster lookups.
+
+        The cache timeout is configurable by setting the
+        ``REST_DURIN["TOKEN_CACHE_TIMEOUT"]`` under your app's ``settings.py``.
+
+        **How To Enable:**
+
+        1. Install django-memoize
+
+        .. parsed-literal::
+            pip install django-memoize
+
+        2. Add ``'memoize'`` to ``INSTALLED_APPS``.
+        3. Then you need to use ``CachedTokenAuthentication``
+           instead of ``TokenAuthentication``.
         """
 
         @classmethod

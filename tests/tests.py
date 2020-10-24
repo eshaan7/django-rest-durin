@@ -28,6 +28,7 @@ new_settings = durin_settings.defaults.copy()
 
 class AuthTestCase(APITestCase):
     def setUp(self):
+        self.authclient = Client.objects.create(name="authclientfortest")
         username = "john.doe"
         email = "john.doe@example.com"
         password = "hunter2"
@@ -35,7 +36,7 @@ class AuthTestCase(APITestCase):
         self.creds = {
             "username": username,
             "password": password,
-            "client": "authclientfortest",
+            "client": self.authclient.name,
         }
 
         username2 = "jane.doe"
@@ -45,11 +46,10 @@ class AuthTestCase(APITestCase):
         self.creds2 = {
             "username": username2,
             "password": password2,
-            "client": "authclientfortest",
+            "client": self.authclient.name,
         }
 
         self.client_names = ["web", "mobile", "cli"]
-        self.authclient = Client.objects.create(name="authclientfortest")
 
     def test_create_clients(self):
         self.assertEqual(Client.objects.count(), 1)
@@ -291,7 +291,7 @@ class AuthTestCase(APITestCase):
             "login should return existing token",
         )
 
-    def test_login_should_renew_token_for_existing_client(self):
+    def test_login_renew_token_existing_client(self):
         self.assertEqual(AuthToken.objects.count(), 0)
         new_settings["REFRESH_TOKEN_ON_LOGIN"] = True
         with override_settings(REST_DURIN=new_settings):
@@ -299,7 +299,6 @@ class AuthTestCase(APITestCase):
             resp1 = self.client.post(login_url, self.creds, format="json")
             self.assertEqual(resp1.status_code, 200)
             self.assertIn("token", resp1.data)
-            self.assertEqual(AuthToken.objects.count(), 1)
             resp2 = self.client.post(login_url, self.creds, format="json")
             self.assertEqual(resp2.status_code, 200)
             self.assertIn("token", resp2.data)
