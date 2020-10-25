@@ -1,6 +1,8 @@
 Permissions (``durin.permissions``)
 ====================================
 
+.. automodule:: durin.permissions
+
 --------------------------
 
 AllowSpecificClients
