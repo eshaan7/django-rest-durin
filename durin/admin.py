@@ -5,6 +5,10 @@ from durin import models
 
 @admin.register(models.AuthToken)
 class AuthTokenAdmin(admin.ModelAdmin):
+    """Django's ModelAdmin for AuthToken.\n
+    In most cases, you would want to override this to make
+    ``AuthTokenAdmin.raw_id_fields = ("user",)``
+    """
     exclude = ("token", "expiry")
     list_display = (
         "token",
@@ -38,4 +42,7 @@ class AuthTokenAdmin(admin.ModelAdmin):
 
 @admin.register(models.Client)
 class ClientAdmin(admin.ModelAdmin):
+    """
+    Django's ModelAdmin for Client.
+    """
     list_display = ("id", "name", "token_ttl")

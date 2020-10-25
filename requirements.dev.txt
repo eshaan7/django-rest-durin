@@ -1,10 +1,9 @@
+django>=2.2
 djangorestframework>=3.7.0
 humanize
-mkdocs
 flake8
 django-nose
 coverage
 django-memoize
 isort
-markdown<3.0
 pytest-django
