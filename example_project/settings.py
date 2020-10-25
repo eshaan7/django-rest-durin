@@ -1,7 +1,7 @@
 import os
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-SECRET_KEY = "supersecretexamplekey"
+SECRET_KEY = "friend"  # http://tolkiengateway.net/wiki/Doors_of_Durin
 DEBUG = True
 ALLOWED_HOSTS = []
 INSTALLED_APPS = (

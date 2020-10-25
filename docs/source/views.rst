@@ -12,11 +12,14 @@ LoginView
    :members:
    :show-inheritance:
 
+Response Data and User Serialization
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
 When the endpoint authenticates a request, a JSON object will be returned
 containing the ``token`` as a string, ``expiry`` as a timestamp for when
 the token expires.
 
-*This is because ``USER_SERIALIZER`` setting is `None` by default.*
+This is because ``USER_SERIALIZER`` setting is ``None`` by default.
 
 If you wish to return custom data upon successful authentication
 like ``first_name``, ``last_name``, and ``username`` then the included ``UserSerializer``

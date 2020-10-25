@@ -71,7 +71,7 @@ class LoginView(APIView):
     @classmethod
     def renew_token(cls, token_obj: "AuthToken") -> None:
         """
-        How to renew the token instance in case 
+        How to renew the token instance in case
         ``settings.REFRESH_TOKEN_ON_LOGIN`` is set to ``True``.
         """
         token_obj.renew_token(renewed_by=cls)

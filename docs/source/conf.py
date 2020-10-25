@@ -30,8 +30,9 @@ project = "Django-Rest-Durin"
 copyright = "2020, Eshaan Bansal"
 author = "Eshaan Bansal"
 
+version = "0.1.0"
 # The full version, including alpha/beta/rc tags
-release = "0.1.0"
+release = "v0.1.0"
 
 
 # -- General configuration ---------------------------------------------------
@@ -83,9 +84,6 @@ html_sidebars = {
     "**": ["localtoc.html", "relations.html", "searchbox.html"],
 }
 singlehtml_sidebars = {"index": ["localtoc.html"]}
-html_static_path = ["_static"]
-# html_favicon = "_static/flask-icon.png"
-# html_logo = "_static/flask-icon.png"
 html_title = f"{project} Documentation ({release})"
 
 

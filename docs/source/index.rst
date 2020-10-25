@@ -14,9 +14,13 @@ Durin authentication is token based, similar to the ``TokenAuthentication``
 built in to DRF. However, it adds some extra sauce:
 
 - Durin allows **multiple tokens** per user. But only one token each user per API client.
-- Each user token is associated with an API Client. These API Clients (:class:`durin.models.Client`) are configurable via Django's Admin Interface.
-- All Durin tokens have an expiration time. This expiration time can be different per API client.
-- Durin provides an option for a logged in user to remove **all** tokens that the server has - forcing him/her to re-authenticate for all API clients.
+- Each user token is associated with an API Client. 
+
+   - These API Clients (:class:`durin.models.Client`) are configurable via Django's Admin Interface. 
+   - Allows only specific clients to make authenticated requests to certain ``APIViews`` or vice-a-versa.
+
+- All Durin **tokens have an expiration time**. This expiration time can be different per API client.
+- Durin provides an option for a logged in user to **remove all tokens** that the server has - forcing him/her to re-authenticate for all API clients.
 - Durin **tokens can be renewed** to get a fresh expiry.
 - Durin provides a :class:`durin.auth.CachedTokenAuthentication` backend as well which uses memoization for faster look ups.
 
@@ -36,6 +40,8 @@ Get started at :doc:`installation`.
    urls
    permissions
    signals
+   faq
+   changelog
    contribute
 
 API Reference

@@ -4,3 +4,4 @@ exclude =
     *migrations*,
     *venv*
     virtualenv
+    docs
