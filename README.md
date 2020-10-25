@@ -16,8 +16,9 @@ Durin authentication is token based, similar to the `TokenAuthentication`
 built in to DRF. However, it adds some extra sauce:
 
 - Durin allows **multiple tokens per user**. But only one token each user per API client.
-- Each user token is associated with an API Client. These API Clients are configurable via Django's Admin Interface. This allows restricting certain `APIViews` to only specific clients or vice-a-versa.
-- All Durin **tokens have an expiration time**. This expiration time can be different per API client.
+- Each user token is associated with an API Client. 
+   - These API Clients are configurable via Django's Admin Interface. 
+   - Includes permission enforcing to allow only specific clients to make authenticated requests to certain `APIViews` or vice-a-versa.
 - Durin provides an option for a logged in user to **remove all tokens** that the server has - forcing them to re-authenticate for all API clients.
 - Durin **tokens can be renewed** to get a fresh expiry.
 - Durin provides a `CachedTokenAuthentication` backend as well which uses memoization for faster look ups.
@@ -25,6 +26,8 @@ built in to DRF. However, it adds some extra sauce:
 More information can be found in the [Documentation](https://django-rest-durin.readthedocs.io/en/latest/installation.html).
 
 ## Django Compatibility Matrix
+
+![PyPi versions - Python](https://img.shields.io/pypi/pyversions/django-rest-durin)
 
 If your project uses an older verison of Django or Django Rest Framework, you can choose an older version of this project.
 
@@ -36,9 +39,9 @@ Make sure to use at least `DRF 3.10` when using `Django 3.0` or newer.
 
 ## Changelog / Releases
 
-All releases should be listed in the [releases tab on github](https://github.com/Eshaan7/django-rest-durin/releases).
+All releases should be listed in the [releases tab on GitHub](https://github.com/Eshaan7/django-rest-durin/releases).
 
-See [CHANGELOG.md](CHANGELOG.md) for a more detailed listing.
+See [CHANGELOG](https://django-rest-durin.readthedocs.io/en/latest/changelog.html) for a more detailed listing.
 
 ## License
 

@@ -17,8 +17,7 @@ built in to DRF. However, it adds some extra sauce:
 - Each user token is associated with an API Client. 
 
    - These API Clients (:class:`durin.models.Client`) are configurable via Django's Admin Interface. 
-   - Allows only specific clients to make authenticated requests to certain ``APIViews`` or vice-a-versa.
-
+   - Includes permission enforcing to allow only specific clients to make authenticated requests to certain ``APIViews`` or vice-a-versa.
 - All Durin **tokens have an expiration time**. This expiration time can be different per API client.
 - Durin provides an option for a logged in user to **remove all tokens** that the server has - forcing him/her to re-authenticate for all API clients.
 - Durin **tokens can be renewed** to get a fresh expiry.
