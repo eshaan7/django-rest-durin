@@ -1,7 +1,7 @@
 # Django-Rest-Durin
 
 [![django-rest-durin on pypi](https://img.shields.io/pypi/v/django-rest-durin)](https://pypi.org/project/django-rest-durin/)
-[![Build Status](https://travis-ci.com/Eshaan7/django-rest-durin.svg?branch=main)](https://travis-ci.com/Eshaan7/django-rest-durin)
+[![Build Status](https://github.com/Eshaan7/django-rest-durin/workflows/Linter%20&%20Tests/badge.svg)](https://github.com/Eshaan7/django-rest-durin/actions?query=workflow%3A%22Linter+%26+Tests%22)
 [![codecov](https://codecov.io/gh/Eshaan7/django-rest-durin/branch/main/graph/badge.svg?token=S9KEI0PU05)](https://codecov.io/gh/Eshaan7/django-rest-durin/)
 [![CodeFactor](https://www.codefactor.io/repository/github/eshaan7/django-rest-durin/badge)](https://www.codefactor.io/repository/github/eshaan7/django-rest-durin)
 <a href="https://lgtm.com/projects/g/Eshaan7/django-rest-durin/context:python">

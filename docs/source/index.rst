@@ -3,7 +3,7 @@ Welcome to Django-Rest-Durin!
 
 .. image:: https://img.shields.io/pypi/v/django-rest-durin
 .. image:: https://img.shields.io/lgtm/grade/python/g/Eshaan7/django-rest-durin.svg?logo=lgtm&logoWidth=18
-.. image:: https://travis-ci.com/Eshaan7/django-rest-durin.svg?branch=main
+.. image:: https://github.com/Eshaan7/django-rest-durin/workflows/Linter%20&%20Tests/badge.svg
 .. image:: https://codecov.io/gh/Eshaan7/django-rest-durin/branch/main/graph/badge.svg?token=S9KEI0PU05
 
 Per API client token authentication Module for Django-REST-Framework_
