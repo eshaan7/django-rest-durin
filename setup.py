@@ -5,10 +5,13 @@ Per API client token authentication Module for django rest framework.
 
 ## Docs & Example Usage: https://github.com/eshaan7/django-rest-durin
 """
+import os
+
 from setuptools import find_packages, setup
 
 # Get the long description from the relevant file
-with open("README.md", encoding="utf-8") as f:
+here = os.path.abspath(os.path.dirname(__file__))
+with open(os.path.join(here, "README.md"), encoding="utf-8") as f:
     long_description = f.read()
 
 GITHUB_URL = "https://github.com/eshaan7/django-rest-durin"
