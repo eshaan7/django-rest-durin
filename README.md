@@ -1,3 +1,7 @@
+[![Get Support](https://xscode.com/assets/promo-banner.svg)](https://xscode.com/eshaan7/django-rest-durin)
+
+_For urgent issues and priority support, visit [https://xscode.com/eshaan7/django-rest-durin](https://xscode.com/eshaan7/django-rest-durin)._
+
 # Django-Rest-Durin
 
 [![django-rest-durin on pypi](https://img.shields.io/pypi/v/django-rest-durin)](https://pypi.org/project/django-rest-durin/)
