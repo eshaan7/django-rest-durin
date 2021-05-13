@@ -3,7 +3,7 @@ from django.contrib import admin
 from durin import models
 
 
-class ClientSetttingsInlineAdmin(admin.StackedInline):
+class ClientSettingsInlineAdmin(admin.StackedInline):
     """
     Django's StackedInline for :class:`ClientSettings` model.
     """
@@ -21,12 +21,11 @@ class AuthTokenAdmin(admin.ModelAdmin):
     exclude = ("token", "expiry")
     list_display = (
         "token",
-        "client_name",
-        "user",
+        "userclient",
         "created",
         "expires_in",
     )
-    list_filter = ("client__name", "user")
+    list_filter = ("userclient__client", "userclient__user")
 
     fieldsets = [
         (
@@ -62,7 +61,7 @@ class ClientAdmin(admin.ModelAdmin):
     """
 
     inlines = [
-        ClientSetttingsInlineAdmin,
+        ClientSettingsInlineAdmin,
     ]
 
     list_display = ("id", "name", "token_ttl", "settings")
