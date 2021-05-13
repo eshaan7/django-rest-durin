@@ -90,7 +90,7 @@ class LoginView(APIView):
         """
         return durin_settings.USER_SERIALIZER
 
-    def get_post_response_data(self, request, token_obj: "AuthToken"):
+    def get_post_response_data(self, request, token_obj: "AuthToken") -> dict:
         """
         Override this to return a fully customized payload.
         """

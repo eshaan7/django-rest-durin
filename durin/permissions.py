@@ -1,8 +1,10 @@
 """
-Durin provides two permission classes which make use of the :class:`durin.models.Client`
+Durin provides two *abstract* permission classes which make use of the :class:`durin.models.Client`
 model it offers.
 
-You can use these the same way as other
+You will need to subclass them and modify the ``allowed_clients_name`` or ``disallowed_clients_name`` property per your wish.
+
+Then you may use them the same way as other
 `DRF permissions <https://www.django-rest-framework.org/api-guide/permissions/>`__ or
 activate them on all your views by adding
 them to ``REST_FRAMEWORK["DEFAULT_PERMISSION_CLASSES"]``

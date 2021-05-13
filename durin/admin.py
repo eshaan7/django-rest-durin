@@ -3,6 +3,14 @@ from django.contrib import admin
 from durin import models
 
 
+class ClientSetttingsInlineAdmin(admin.StackedInline):
+    """
+    Django's StackedInline for :class:`ClientSettings` model.
+    """
+
+    model = models.ClientSettings
+
+
 @admin.register(models.AuthToken)
 class AuthTokenAdmin(admin.ModelAdmin):
     """Django's ModelAdmin for AuthToken.\n
@@ -38,13 +46,23 @@ class AuthTokenAdmin(admin.ModelAdmin):
         return obj.client.name
 
     def save_model(self, request, obj, form, change):
-        return models.AuthToken.objects.create(obj.user, obj.client)
+        if not change:
+            created_obj = models.AuthToken.objects.create(obj.user, obj.client)
+            obj.pk = created_obj.pk
+            obj.token = created_obj.token
+            obj.expiry = created_obj.expiry
+        else:
+            super(AuthTokenAdmin, self).save_model(request, obj, form, change)
 
 
 @admin.register(models.Client)
 class ClientAdmin(admin.ModelAdmin):
     """
-    Django's ModelAdmin for Client.
+    Django's ModelAdmin for :class:`Client` model.
     """
 
-    list_display = ("id", "name", "token_ttl")
+    inlines = [
+        ClientSetttingsInlineAdmin,
+    ]
+
+    list_display = ("id", "name", "token_ttl", "settings")
