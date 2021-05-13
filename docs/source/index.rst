@@ -31,27 +31,43 @@ Get started at :doc:`installation`.
 
 .. toctree::
    :maxdepth: 2
+   :caption: Setup
    
    installation
    settings
+
+.. toctree::
+   :maxdepth: 2
+   :glob:
+   :caption: API
+
    auth
    views
    urls
    permissions
-   signals
-   faq
-   changelog
-   contribute
-
-API Reference
--------------------------------
-If you are looking for information on a specific function, class or
-method, this part of the documentation is for you.
+   throttling
 
 .. toctree::
    :maxdepth: 2
-   
-   durin
+   :glob:
+   :caption: Modules
+
+   models
+   sub_modules
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Other
+
+   faq
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Development
+
+   contribute
+   changelog
+
 
 Indices and tables
 ================================
