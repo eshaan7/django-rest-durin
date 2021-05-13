@@ -35,9 +35,9 @@ More information can be found in the [Documentation](https://django-rest-durin.r
 
 If your project uses an older verison of Django or Django Rest Framework, you can choose an older version of this project.
 
-| This Project | Python Version | Django Version | Django Rest Framework |
-|--------------|----------------|----------------|-----------------------|
-| 0.1.*        | 3.5 - 3.9      | 2.2, 3.0, 3.1  | 3.7>=                 |
+| This Project | Python Version | Django Version     | Django Rest Framework |
+|--------------|----------------|--------------------|-----------------------|
+| 0.1.*        | 3.5 - 3.9      | 2.2, 3.0, 3.1, 3.2 | 3.7>=                 |
 
 Make sure to use at least `DRF 3.10` when using `Django 3.0` or newer.
 
