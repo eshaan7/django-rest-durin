@@ -23,6 +23,7 @@ built in to DRF. However, it adds some extra sauce:
 - Each user token is associated with an API Client. 
    - These API Clients are configurable via Django's Admin Interface. 
    - Includes permission enforcing to allow only specific clients to make authenticated requests to certain `APIViews` or vice-a-versa.
+   - Configure Rate-Throttling_ per User <-> Client pair.
 - Durin provides an option for a logged in user to **remove all tokens** that the server has - forcing them to re-authenticate for all API clients.
 - Durin **tokens can be renewed** to get a fresh expiry.
 - Durin provides a `CachedTokenAuthentication` backend as well which uses memoization for faster look ups.

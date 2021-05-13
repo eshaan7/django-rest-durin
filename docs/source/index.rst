@@ -17,13 +17,16 @@ built in to DRF. However, it adds some extra sauce:
 - Each user token is associated with an API Client. 
 
    - These API Clients (:class:`durin.models.Client`) are configurable via Django's Admin Interface. 
-   - Includes permission enforcing to allow only specific clients to make authenticated requests to certain ``APIViews`` or vice-a-versa.
+   - Includes Permission-enforcing_ to allow only specific clients to make authenticated requests to certain ``APIViews`` or vice-a-versa.
+   - Configure Rate-Throttling_ per User <-> Client pair.
 - All Durin **tokens have an expiration time**. This expiration time can be different per API client.
 - Durin provides an option for a logged in user to **remove all tokens** that the server has - forcing him/her to re-authenticate for all API clients.
 - Durin **tokens can be renewed** to get a fresh expiry.
 - Durin provides a :class:`durin.auth.CachedTokenAuthentication` backend as well which uses memoization for faster look ups.
 
 .. _Django-REST-Framework: http://www.django-rest-framework.org/
+.. _Permission-enforcing: permissions.html
+.. _Rate-Throttling: throttling.html
 
 Index
 -------------------------------
@@ -31,27 +34,43 @@ Get started at :doc:`installation`.
 
 .. toctree::
    :maxdepth: 2
+   :caption: Setup
    
    installation
    settings
+
+.. toctree::
+   :maxdepth: 2
+   :glob:
+   :caption: API
+
    auth
    views
    urls
    permissions
-   signals
-   faq
-   changelog
-   contribute
-
-API Reference
--------------------------------
-If you are looking for information on a specific function, class or
-method, this part of the documentation is for you.
+   throttling
 
 .. toctree::
    :maxdepth: 2
-   
-   durin
+   :glob:
+   :caption: Modules
+
+   models
+   sub_modules
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Other
+
+   faq
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Development
+
+   contribute
+   changelog
+
 
 Indices and tables
 ================================
