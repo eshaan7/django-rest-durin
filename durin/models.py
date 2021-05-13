@@ -146,7 +146,7 @@ class AuthToken(models.Model):
         unique=True,
         help_text=_("Token is auto-generated on save."),
     )
-    #: :class:`~User`  reference
+    #: :class:`~User` ForeignKey
     user = models.ForeignKey(
         User,
         null=False,
@@ -154,7 +154,7 @@ class AuthToken(models.Model):
         related_name="auth_token_set",
         on_delete=models.CASCADE,
     )
-    #: :class:`~Client` reference
+    #: :class:`~Client` ForeignKey
     client = models.ForeignKey(
         Client,
         null=False,
@@ -167,7 +167,7 @@ class AuthToken(models.Model):
     #: Expiry time
     expiry = models.DateTimeField(null=False)
 
-    def renew_token(self, renewed_by):
+    def renew_token(self, renewed_by) -> "timezone.datetime":
         """
         Utility function to renew the token.
 

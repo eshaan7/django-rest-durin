@@ -3,12 +3,15 @@ from django.contrib import admin
 from durin import models
 
 
-class ClientSetttingsInlineAdmin(admin.StackedInline):
+class ClientSettingsInlineAdmin(admin.StackedInline):
     """
     Django's StackedInline for :class:`ClientSettings` model.
     """
 
     model = models.ClientSettings
+
+    list_select_related = True
+    extra = 1
 
 
 @admin.register(models.AuthToken)
@@ -18,36 +21,48 @@ class AuthTokenAdmin(admin.ModelAdmin):
     ``AuthTokenAdmin.raw_id_fields = ("user",)``
     """
 
-    exclude = ("token", "expiry")
+    list_select_related = True
+
     list_display = (
         "token",
-        "client_name",
+        "client",
         "user",
         "created",
         "expires_in",
     )
     list_filter = ("client__name", "user")
 
-    fieldsets = [
-        (
-            "API Auth Token",
-            {
-                "fields": ("user", "client"),
-                "description": """
+    readonly_fields = ("token", "expiry", "created", "expires_in")
+
+    def get_fieldsets(self, request, obj=None):
+        if not obj:
+            return [
+                (
+                    "API Auth Token",
+                    {
+                        "fields": (
+                            "user",
+                            "client",
+                        ),
+                        "description": """
                     <h3>Token will be auto-generated on save.</h3>
                     <h3>Token will carry the same expiry as the
                      selected client's token TTL.</h3>
                 """,
-            },
-        ),
-    ]
+                    },
+                ),
+            ]
+        else:
+            return super().get_fieldsets(request, obj)
 
-    def client_name(self, obj):
-        return obj.client.name
+    def has_change_permission(self, request, obj=None):
+        return False
 
     def save_model(self, request, obj, form, change):
         if not change:
-            created_obj = models.AuthToken.objects.create(obj.user, obj.client)
+            created_obj = models.AuthToken.objects.create(
+                user=obj.user, client=obj.client
+            )
             obj.pk = created_obj.pk
             obj.token = created_obj.token
             obj.expiry = created_obj.expiry
@@ -62,7 +77,11 @@ class ClientAdmin(admin.ModelAdmin):
     """
 
     inlines = [
-        ClientSetttingsInlineAdmin,
+        ClientSettingsInlineAdmin,
     ]
 
-    list_display = ("id", "name", "token_ttl", "settings")
+    list_display = (
+        "id",
+        "name",
+        "token_ttl",
+    )
