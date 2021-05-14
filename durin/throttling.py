@@ -26,8 +26,6 @@ Example ``settings.py``::
 from django.core.exceptions import ValidationError as DjValidationError
 from rest_framework.throttling import UserRateThrottle
 
-__all__ = ["UserClientRateThrottle"]
-
 
 class UserClientRateThrottle(UserRateThrottle):
     """
@@ -46,6 +44,7 @@ class UserClientRateThrottle(UserRateThrottle):
     scope = "user_per_client"
 
     def __init__(self):
+        # lgtm [py/missing-call-to-init]
         pass
 
     def allow_request(self, request, view):
@@ -59,7 +58,6 @@ class UserClientRateThrottle(UserRateThrottle):
         else:
             self.rate = self.get_rate()
 
-        # flake8: noqa F841
         self.num_requests, self.duration = self.parse_rate(self.rate)
 
         return super().allow_request(request, view)
@@ -68,7 +66,7 @@ class UserClientRateThrottle(UserRateThrottle):
         if request.user.is_authenticated:
             # overwrite
             if hasattr(request, "_auth"):
-                ident = self.get_user_client_ident(request)
+                ident = self._get_user_client_ident(request)
             else:
                 ident = request.user.pk
         else:
@@ -76,15 +74,14 @@ class UserClientRateThrottle(UserRateThrottle):
 
         return self.cache_format % {"scope": self.scope, "ident": ident}
 
-    def get_user_client_ident(self, request) -> str:
+    def _get_user_client_ident(self, request) -> str:
         """
         Identify the user-client pair making the request.
-        (assumes that ``request._auth`` and ``requests.user``
-        are set, see :py:meth:`~get_cache_key`).
+        (assumes that ``request._auth`` is set, see :py:meth:`~get_cache_key`).
         """
-        auth_user = request.user
-        client = request._auth.client
-        ident = "user-{0}.client-{1}".format(auth_user.pk, client.pk)
+        user_pk = request._auth.user_id
+        client_pk = request._auth.client_id
+        ident = "user-{0}.client-{1}".format(user_pk, client_pk)
         return ident
 
     @staticmethod
@@ -97,12 +94,9 @@ class UserClientRateThrottle(UserRateThrottle):
         """
         TIME_PERIODS_MAP = {"s": 1, "m": 60, "h": 3600, "d": 86400}
 
-        if rate is None:
-            return
         try:
             num, period = rate.split("/")
-            num_requests = int(num)
-            duration = TIME_PERIODS_MAP[period]
+            return int(num), TIME_PERIODS_MAP[period]
         except KeyError:
             raise DjValidationError("invalid period '{0}'.".format(period))
         except Exception as e:

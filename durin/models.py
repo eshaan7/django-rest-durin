@@ -6,7 +6,6 @@ import humanize
 from django.conf import settings
 from django.db import models
 from django.utils import timezone
-from django.utils.functional import cached_property
 from django.utils.translation import ugettext_lazy as _
 
 from durin.settings import durin_settings
@@ -53,7 +52,7 @@ class Client(models.Model):
         td = humanize.naturaldelta(self.token_ttl)
         return "({0}, {1})".format(self.name, td)
 
-    @cached_property
+    @property
     def throttle_rate(self) -> Union[str, None]:
         if hasattr(self, "settings"):
             return self.settings.throttle_rate

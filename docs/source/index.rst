@@ -47,8 +47,7 @@ Get started at :doc:`installation`.
    auth
    views
    urls
-   permissions
-   throttling
+   signals
 
 .. toctree::
    :maxdepth: 2
@@ -56,6 +55,8 @@ Get started at :doc:`installation`.
    :caption: Modules
 
    models
+   permissions
+   throttling
    sub_modules
 
 .. toctree::
