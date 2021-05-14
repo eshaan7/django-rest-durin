@@ -108,17 +108,52 @@ class ClientSettings(models.Model):
         return "(rate: '{0}')".format(self.throttle_rate)
 
 
+class UserClient(models.Model):
+    """
+    ``User`` <-> ``Client`` relationship.
+    """
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["user", "client"], name="unique user client pair"
+            )
+        ]
+
+    # :class:`~User` ForeignKey
+    user = models.ForeignKey(
+        User,
+        null=False,
+        blank=False,
+        related_name="clients",
+        on_delete=models.CASCADE,
+    )
+    #: :class:`~Client` ForeignKey
+    client = models.ForeignKey(
+        Client,
+        null=False,
+        blank=False,
+        related_name="users",
+        on_delete=models.CASCADE,
+    )
+
+    def __str__(self) -> str:
+        return "({0}, {1})".format(self.user, self.client)
+
+
 class AuthTokenManager(models.Manager):
-    def create(self, user, client, delta_ttl=None):
+    def create(self, userclient: UserClient, delta_ttl: "timezone.timedelta" = None):
         token = _create_token_string()
 
         if delta_ttl is not None:
             expiry = timezone.now() + delta_ttl
         else:
-            expiry = timezone.now() + client.token_ttl
+            expiry = timezone.now() + userclient.client.token_ttl
 
         instance = super(AuthTokenManager, self).create(
-            token=token, user=user, client=client, expiry=expiry
+            token=token,
+            expiry=expiry,
+            userclient=userclient,
         )
         return instance
 
@@ -127,13 +162,6 @@ class AuthToken(models.Model):
     """
     Token model with a unique constraint on ``User`` <-> ``Client`` relationship.
     """
-
-    class Meta:
-        constraints = [
-            models.UniqueConstraint(
-                fields=["user", "client"], name="unique token for user per client"
-            )
-        ]
 
     objects = AuthTokenManager()
 
@@ -146,26 +174,19 @@ class AuthToken(models.Model):
         unique=True,
         help_text=_("Token is auto-generated on save."),
     )
-    #: :class:`~User`  reference
-    user = models.ForeignKey(
-        User,
-        null=False,
-        blank=False,
-        related_name="auth_token_set",
-        on_delete=models.CASCADE,
-    )
-    #: :class:`~Client` reference
-    client = models.ForeignKey(
-        Client,
-        null=False,
-        blank=False,
-        related_name="auth_token_set",
-        on_delete=models.CASCADE,
-    )
     #: Created time
     created = models.DateTimeField(auto_now_add=True)
     #: Expiry time
     expiry = models.DateTimeField(null=False)
+
+    #: `OneToOneField <https://docs.djangoproject.com/en/3.2/topics/db/examples/one_to_one/>`__
+    #: with :py:class:`~UserClient` with ``on_delete=models.CASCADE``.
+    userclient = models.OneToOneField(
+        UserClient,
+        null=True,
+        related_name="authtoken",
+        on_delete=models.CASCADE,
+    )
 
     def renew_token(self, renewed_by):
         """
@@ -173,14 +194,13 @@ class AuthToken(models.Model):
 
         Updates the :py:attr:`~expiry` attribute by ``Client.token_ttl``.
         """
-        new_expiry = timezone.now() + self.client.token_ttl
+        new_expiry = timezone.now() + self.userclient.client.token_ttl
         self.expiry = new_expiry
         self.save(update_fields=("expiry",))
         token_renewed.send(
             sender=renewed_by,
-            username=self.user.get_username(),
-            token_id=self.pk,
-            expiry=new_expiry,
+            token=self,
+            new_expiry=new_expiry,
         )
         return new_expiry
 
@@ -206,10 +226,5 @@ class AuthToken(models.Model):
         """
         return timezone.now() > self.expiry
 
-    def __repr__(self) -> str:
-        return "({0}, {1}/{2})".format(
-            self.token, self.user.get_username(), self.client.name
-        )
-
     def __str__(self) -> str:
-        return self.token
+        return "({0}, {1})".format(self.token, self.userclient)

@@ -1,15 +1,14 @@
 from django.contrib.auth.signals import user_logged_in, user_logged_out
-from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import status
 from rest_framework.authtoken.serializers import AuthTokenSerializer
-from rest_framework.exceptions import ParseError
+from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.serializers import DateTimeField
 from rest_framework.views import APIView
 
 from durin.auth import TokenAuthentication
-from durin.models import AuthToken, Client
+from durin.models import AuthToken, Client, UserClient
 from durin.settings import durin_settings
 
 
@@ -42,29 +41,39 @@ class LoginView(APIView):
         serializer.is_valid(raise_exception=True)
         return serializer.validated_data["user"]
 
-    @staticmethod
-    def get_client_obj(request) -> "Client":
+    def get_client_obj(self, request) -> "Client":
         """
         To get and return the associated :class:`durin.models.Client` object.
+
+        :raises rest_framework.exceptions.ValidationError
         """
         client_name = request.data.get("client", None)
         if not client_name:
-            raise ParseError("No client specified.", status.HTTP_400_BAD_REQUEST)
-        return Client.objects.get(name=client_name)
+            raise ValidationError("No client specified.")
 
-    @classmethod
-    def get_token_obj(cls, request, client: "Client") -> "AuthToken":
+        try:
+            return Client.objects.get(name=client_name)
+        except Client.DoesNotExist:
+            raise ValidationError("No client with that name.")
+
+    def get_token_obj(self, request, client: "Client") -> "AuthToken":
         """
         Flow used to return the :class:`durin.models.AuthToken` object.
         """
+
+        # get UserClient object against which token is to be issued
+        userclient, _ = UserClient.objects.get_or_create(
+            user=request.user, client=client
+        )
+
         try:
-            # a token for this user and client already exists, so we can just return it
-            token = AuthToken.objects.get(user=request.user, client=client)
+            # if a token for this user-client pair already exists, we can just return it
+            token = AuthToken.objects.get(userclient=userclient)
             if durin_settings.REFRESH_TOKEN_ON_LOGIN:
-                cls.renew_token(token)
-        except ObjectDoesNotExist:
+                self.renew_token(token)
+        except AuthToken.DoesNotExist:
             # create new token
-            token = AuthToken.objects.create(request.user, client)
+            token = AuthToken.objects.create(userclient=userclient)
 
         return token
 

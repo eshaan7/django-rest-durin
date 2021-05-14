@@ -10,11 +10,18 @@ INSTALLED_APPS = (
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
+    "django.contrib.staticfiles",
     "memoize",
     "rest_framework",
     "durin",
     "django_nose",
 )
+
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+REST_FRAMEWORK = {
+    "DEFAULT_THROTTLE_RATES": {"user_per_client": "2/m"},
+}
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",

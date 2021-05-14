@@ -11,6 +11,19 @@ class ClientSettingsInlineAdmin(admin.StackedInline):
     model = models.ClientSettings
 
 
+class UserClientInlineAdmin(admin.TabularInline):
+    model = models.UserClient
+    list_select_related = True
+    fields = ("user", "client")
+    extra = 1
+
+
+@admin.register(models.UserClient)
+class UserClientAdmin(admin.ModelAdmin):
+    list_select_related = True
+    list_display = ("user", "client", "authtoken")
+
+
 @admin.register(models.AuthToken)
 class AuthTokenAdmin(admin.ModelAdmin):
     """Django's ModelAdmin for AuthToken.\n
@@ -18,7 +31,8 @@ class AuthTokenAdmin(admin.ModelAdmin):
     ``AuthTokenAdmin.raw_id_fields = ("user",)``
     """
 
-    exclude = ("token", "expiry")
+    list_select_related = True
+
     list_display = (
         "token",
         "userclient",
@@ -27,26 +41,32 @@ class AuthTokenAdmin(admin.ModelAdmin):
     )
     list_filter = ("userclient__client", "userclient__user")
 
-    fieldsets = [
-        (
-            "API Auth Token",
-            {
-                "fields": ("user", "client"),
-                "description": """
+    readonly_fields = ("token", "expiry", "created", "expires_in")
+
+    def get_fieldsets(self, request, obj=None):
+        if not obj:
+            return [
+                (
+                    "API Auth Token",
+                    {
+                        "fields": ("userclient",),
+                        "description": """
                     <h3>Token will be auto-generated on save.</h3>
                     <h3>Token will carry the same expiry as the
                      selected client's token TTL.</h3>
                 """,
-            },
-        ),
-    ]
+                    },
+                ),
+            ]
+        else:
+            return super().get_fieldsets(request, obj)
 
-    def client_name(self, obj):
-        return obj.client.name
+    def has_change_permission(self, request, obj=None):
+        return False
 
     def save_model(self, request, obj, form, change):
         if not change:
-            created_obj = models.AuthToken.objects.create(obj.user, obj.client)
+            created_obj = models.AuthToken.objects.create(userclient=obj.userclient)
             obj.pk = created_obj.pk
             obj.token = created_obj.token
             obj.expiry = created_obj.expiry
@@ -60,8 +80,6 @@ class ClientAdmin(admin.ModelAdmin):
     Django's ModelAdmin for :class:`Client` model.
     """
 
-    inlines = [
-        ClientSettingsInlineAdmin,
-    ]
+    inlines = [ClientSettingsInlineAdmin, UserClientInlineAdmin]
 
     list_display = ("id", "name", "token_ttl", "settings")
