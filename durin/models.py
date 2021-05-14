@@ -6,8 +6,8 @@ import humanize
 from django.conf import settings
 from django.db import models
 from django.utils import timezone
-from django.utils.translation import ugettext_lazy as _
 from django.utils.functional import cached_property
+from django.utils.translation import ugettext_lazy as _
 
 from durin.settings import durin_settings
 from durin.signals import token_renewed
@@ -49,16 +49,16 @@ class Client(models.Model):
         ),
     )
 
+    def __str__(self):
+        td = humanize.naturaldelta(self.token_ttl)
+        return "({0}, {1})".format(self.name, td)
+
     @cached_property
     def throttle_rate(self) -> Union[str, None]:
         if hasattr(self, "settings"):
             return self.settings.throttle_rate
         else:
             return None
-
-    def __str__(self):
-        td = humanize.naturaldelta(self.token_ttl)
-        return "({0}, {1})".format(self.name, td)
 
 
 class ClientSettings(models.Model):
@@ -72,11 +72,11 @@ class ClientSettings(models.Model):
     .. versionadded:: 0.2
     """
 
-    #: `OneToOneField <https://docs.djangoproject.com/en/3.2/topics/db/examples/one_to_one/>`__
+    #: `OneToOneField
+    #: <https://docs.djangoproject.com/en/3.2/topics/db/examples/one_to_one/>`__
     #: with :py:class:`~Client` with ``on_delete=models.CASCADE``.
     client = models.OneToOneField(
         Client,
-        null=False,
         blank=False,
         related_name="settings",
         on_delete=models.CASCADE,
@@ -91,7 +91,7 @@ class ClientSettings(models.Model):
     #: **Example**: ``100/h`` implies 100 requests each hour.
     throttle_rate = models.CharField(
         max_length=64,
-        null=True,
+        default="",
         blank=True,
         verbose_name=_("Throttle rate for requests authed with this client"),
         help_text=_(

@@ -1,9 +1,10 @@
 """
-Durin provides a throttling class which make use of the :class:`durin.models.Client` and :class:`durin.models.ClientSettings`
+Durin provides a throttling class which make use of the
+:class:`durin.models.Client` and :class:`durin.models.ClientSettings`
 models it offers.
 
 Usage is the same way as other
-`DRF throttling classes <https://www.django-rest-framework.org/api-guide/throttling/>`__.
+`DRF throttling classes <https://django-rest-framework.org/api-guide/throttling/>`__.
 
 Example ``settings.py``::
 
@@ -15,9 +16,9 @@ Example ``settings.py``::
         #...snip...
 
 .. data:: "user_per_client"
-	
+
     default ``scope`` for the :class:`UserClientRateThrottle` class.
-    
+
     The rate defined here serves as the default rate incase the
     ``throttle_rate`` field on :class:`durin.models.ClientSettings` is ``null``.
 """
@@ -58,6 +59,7 @@ class UserClientRateThrottle(UserRateThrottle):
         else:
             self.rate = self.get_rate()
 
+        # flake8: noqa F841
         self.num_requests, self.duration = self.parse_rate(self.rate)
 
         return super().allow_request(request, view)
@@ -77,7 +79,8 @@ class UserClientRateThrottle(UserRateThrottle):
     def get_user_client_ident(self, request) -> str:
         """
         Identify the user-client pair making the request.
-        (assumes that ``request._auth`` and ``requests.user`` are set, see :py:meth:`~get_cache_key`).
+        (assumes that ``request._auth`` and ``requests.user``
+        are set, see :py:meth:`~get_cache_key`).
         """
         auth_user = request.user
         client = request._auth.client
@@ -87,7 +90,8 @@ class UserClientRateThrottle(UserRateThrottle):
     @staticmethod
     def validate_client_throttle_rate(rate):
         """
-        Used for validating the :attr:`throttle_rate` field on :class:`durin.models.ClientSettings`.
+        Used for validating the :attr:`throttle_rate` field
+        on :class:`durin.models.ClientSettings`.
 
         *For internal use only.*
         """
