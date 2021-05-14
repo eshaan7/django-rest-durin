@@ -167,7 +167,7 @@ class AuthToken(models.Model):
     #: Expiry time
     expiry = models.DateTimeField(null=False)
 
-    def renew_token(self, renewed_by) -> "timezone.datetime":
+    def renew_token(self, request=None) -> "timezone.datetime":
         """
         Utility function to renew the token.
 
@@ -177,10 +177,9 @@ class AuthToken(models.Model):
         self.expiry = new_expiry
         self.save(update_fields=("expiry",))
         token_renewed.send(
-            sender=renewed_by,
-            username=self.user.get_username(),
-            token_id=self.pk,
-            expiry=new_expiry,
+            sender=self,
+            request=request,
+            new_expiry=new_expiry,
         )
         return new_expiry
 

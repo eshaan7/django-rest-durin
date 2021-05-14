@@ -67,20 +67,19 @@ class LoginView(APIView):
             # we can just return it
             token = AuthToken.objects.get(user=request.user, client=client)
             if durin_settings.REFRESH_TOKEN_ON_LOGIN:
-                self.renew_token(token)
+                self.renew_token(request=request, token=token)
         except AuthToken.DoesNotExist:
             # create new token
             token = AuthToken.objects.create(request.user, client)
 
         return token
 
-    @classmethod
-    def renew_token(cls, token_obj: "AuthToken") -> None:
+    def renew_token(self, request, token: "AuthToken") -> None:
         """
         How to renew the token instance in case
         ``settings.REFRESH_TOKEN_ON_LOGIN`` is set to ``True``.
         """
-        token_obj.renew_token(renewed_by=cls)
+        token.renew_token(request=request)
 
     @staticmethod
     def format_expiry_datetime(expiry: "datetime") -> str:
@@ -144,16 +143,16 @@ class RefreshView(APIView):
         datetime_format = durin_settings.EXPIRY_DATETIME_FORMAT
         return DateTimeField(format=datetime_format).to_representation(expiry)
 
-    def renew_token(self, token_obj: "AuthToken") -> "datetime":
+    def renew_token(self, request, token: "AuthToken") -> "datetime":
         """
         How to renew the token instance.
         """
-        new_expiry = token_obj.renew_token(renewed_by=self.__class__)
+        new_expiry = token.renew_token(request=request)
         return new_expiry
 
     def post(self, request, *args, **kwargs):
         auth_token = request._auth
-        new_expiry = self.renew_token(auth_token)
+        new_expiry = self.renew_token(request=request, token=auth_token)
         new_expiry_repr = self.format_expiry_datetime(new_expiry)
         return Response({"expiry": new_expiry_repr}, status=status.HTTP_200_OK)
 
