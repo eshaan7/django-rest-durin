@@ -19,7 +19,7 @@ GITHUB_URL = "https://github.com/eshaan7/django-rest-durin"
 setup(
     name="django-rest-durin",
     url=GITHUB_URL,
-    version="0.1.0",
+    version="0.2.0",
     license="MIT",
     description="""
     Per API client token authentication Module for django rest framework.
@@ -62,7 +62,19 @@ setup(
     # for example:
     # $ pip install -e .[dev,test]
     extras_require={
-        "dev": ["black==20.8b1", "flake8", "django-nose", "django-memoize", "isort"],
-        "test": ["black==20.8b1", "flake8", "django-nose", "django-memoize", "isort"],
+        "dev": [
+            "black==20.8b1",
+            "flake8",
+            "django-nose",
+            "django-cache-memoize",
+            "isort",
+        ],
+        "test": [
+            "black==20.8b1",
+            "flake8",
+            "django-nose",
+            "django-cache-memoize",
+            "isort",
+        ],
     },
 )
