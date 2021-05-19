@@ -18,6 +18,7 @@ Example ``settings.py``::
 			"EXPIRY_DATETIME_FORMAT": api_settings.DATETIME_FORMAT,
 			"TOKEN_CACHE_TIMEOUT": 60,
 			"REFRESH_TOKEN_ON_LOGIN": False,
+			"AUTHTOKEN_SELECT_RELATED_LIST": ["user"],
 		}
 		#...snip...
 
@@ -83,4 +84,20 @@ Example ``settings.py``::
 
 	In the first case, the already existing token is sent in response. 
 	So this setting if set to ``True`` should extend the expiry time of the 
-	token by it's :class:`durin.models.Client` ``token_ttl`` everytime login happens. 
+	token by it's :class:`durin.models.Client` ``token_ttl`` everytime login happens.
+
+.. data:: AUTHTOKEN_SELECT_RELATED_LIST
+
+	Default: ``["user"]``
+
+	This is passed as an argument to ``select_related`` when the :class:`durin.auth.TokenAuthentication` class
+	fetches the :class:`durin.models.AuthToken` instance. For example,
+
+	.. code-block:: python
+
+		AuthToken.objects.select_related(*AUTHTOKEN_SELECT_RELATED_LIST).get(token=token_string)
+
+	Otherwise, set to a falsy value such as ``None`` or ``False`` to not use ``select_related``.
+
+	.. Hint:: Refer to `Django's select_related docs <https://docs.djangoproject.com/en/3.2/ref/models/querysets/#select-related>`_
+	          to see how this can boost performance by reducing number of SQL queries made.

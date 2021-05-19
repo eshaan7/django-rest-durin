@@ -76,7 +76,8 @@ class Client(models.Model):
 
     def __str__(self):
         td = humanize.naturaldelta(self.token_ttl)
-        return "({0}, {1})".format(self.name, td)
+        rate = self.throttle_rate or "null"
+        return "({0}: {1}, {2})".format(self.name, td, rate)
 
 
 class AuthTokenManager(models.Manager):
