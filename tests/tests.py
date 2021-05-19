@@ -2,11 +2,12 @@ import time
 from datetime import timedelta
 from importlib import reload
 
-from django.contrib.auth import get_user_model
-from django.test import override_settings
+from django.core.exceptions import ValidationError as DjValidationError
+from django.test import TestCase, override_settings
 from django.urls import reverse
+from rest_framework import status
 from rest_framework.serializers import DateTimeField
-from rest_framework.test import APIRequestFactory, APITestCase
+from rest_framework.test import APIRequestFactory
 
 from durin import views
 from durin.auth import TokenAuthentication
@@ -15,53 +16,26 @@ from durin.serializers import UserSerializer
 from durin.settings import durin_settings
 from durin.signals import token_expired, token_renewed
 
-User = get_user_model()
-root_url = reverse("api-root")
-cached_auth_url = reverse("cached-auth-api")
+from . import CustomTestCase
+
 login_url = reverse("durin_login")
 logout_url = reverse("durin_logout")
 logoutall_url = reverse("durin_logoutall")
 refresh_url = reverse("durin_refresh")
 
+root_url = reverse("api-root")
+cached_auth_url = reverse("cached-auth-api")
+throttled_view_url = reverse("throttled-api")
+
 new_settings = durin_settings.defaults.copy()
 
 
-class AuthTestCase(APITestCase):
-    def setUp(self):
-        self.authclient = Client.objects.create(name="authclientfortest")
-        username = "john.doe"
-        email = "john.doe@example.com"
-        password = "hunter2"
-        self.user = User.objects.create_user(username, email, password)
-        self.creds = {
-            "username": username,
-            "password": password,
-            "client": self.authclient.name,
-        }
-
-        username2 = "jane.doe"
-        email2 = "jane.doe@example.com"
-        password2 = "hunter2"
-        self.user2 = User.objects.create_user(username2, email2, password2)
-        self.creds2 = {
-            "username": username2,
-            "password": password2,
-            "client": self.authclient.name,
-        }
-
-        self.client_names = ["web", "mobile", "cli"]
-
-    def test_create_clients(self):
-        self.assertEqual(Client.objects.count(), 1)
-        Client.objects.all().delete()
-        self.assertEqual(Client.objects.count(), 0)
-        for name in self.client_names:
-            Client.objects.create(name=name)
-        self.assertEqual(Client.objects.count(), len(self.client_names))
-
+class AuthTestCase(CustomTestCase):
     def test_create_tokens_for_users(self):
+        AuthToken.objects.all().delete()
         self.assertEqual(AuthToken.objects.count(), 0)
-        self.test_create_clients()
+        self.__create_clients()
+
         creds = self.creds.copy()
         creds2 = self.creds2.copy()
         for c in Client.objects.all():
@@ -79,6 +53,7 @@ class AuthTestCase(APITestCase):
                 creds2,
                 format="json",
             )
+
         self.assertEqual(self.user.auth_token_set.count(), Client.objects.count())
         self.assertEqual(self.user2.auth_token_set.count(), Client.objects.count())
         self.assertTrue(all(t.token for t in AuthToken.objects.all()))
@@ -144,12 +119,19 @@ class AuthTestCase(APITestCase):
             DateTimeField().to_representation(AuthToken.objects.first().expiry),
         )
 
-    def test_login_should_fail_if_no_client_in_request(self):
+    def test_login_should_fail_if_no_client(self):
         self.assertEqual(AuthToken.objects.count(), 0)
         self.creds.pop("client")
-        response = self.client.post(login_url, self.creds, format="json")
+        response = self.client.post(login_url, self.creds)
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data["detail"], "No client specified.")
+
+    def test_login_should_fail_if_invalid_client(self):
+        self.assertEqual(AuthToken.objects.count(), 0)
+        self.creds["client"] = "invalid name"
+        response = self.client.post(login_url, self.creds)
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.data["detail"], "No client with that name.")
 
     def test_expired_token_fails(self):
         self.assertEqual(AuthToken.objects.count(), 0)
@@ -168,14 +150,14 @@ class AuthTestCase(APITestCase):
         self.assertEqual(AuthToken.objects.count(), 2)
 
         self.client.credentials(HTTP_AUTHORIZATION=("Token %s" % instance.token))
-        self.client.post(logout_url, {}, format="json")
+        self.client.post(logout_url)
         self.assertEqual(
             AuthToken.objects.count(), 1, "other tokens should remain after logout"
         )
 
     def test_logout_all_deletes_keys(self):
         self.assertEqual(AuthToken.objects.count(), 0)
-        self.test_create_clients()
+        self.__create_clients()
         for c in Client.objects.all():
             token = AuthToken.objects.create(user=self.user, client=c)
         self.assertEqual(AuthToken.objects.count(), len(self.client_names))
@@ -186,7 +168,7 @@ class AuthTestCase(APITestCase):
 
     def test_logout_all_deletes_only_targets_keys(self):
         self.assertEqual(AuthToken.objects.count(), 0)
-        self.test_create_clients()
+        self.__create_clients()
         for c in Client.objects.all():
             instance = AuthToken.objects.create(user=self.user, client=c)
             AuthToken.objects.create(user=self.user2, client=c)
@@ -235,7 +217,7 @@ class AuthTestCase(APITestCase):
     def test_expiry_signals(self):
         self.signal_was_called = False
 
-        def handler(sender, username, **kwargs):
+        def handler(sender, **kwargs):
             self.signal_was_called = True
 
         token_expired.connect(handler)
@@ -323,7 +305,7 @@ class AuthTestCase(APITestCase):
     def test_refresh_view_and_renewed_signal(self):
         self.signal_was_called = False
 
-        def handler(sender, username, **kwargs):
+        def handler(sender, **kwargs):
             self.signal_was_called = True
 
         token_renewed.connect(handler)
@@ -341,6 +323,56 @@ class AuthTestCase(APITestCase):
         self.assertNotEqual(resp.data["expiry"], instance.expiry)
         self.assertTrue(self.signal_was_called, "token_renewed signal was called.")
 
+    def __create_clients(self):
+        Client.objects.all().delete()
+        self.assertEqual(Client.objects.count(), 0)
+        for name in self.client_names:
+            Client.objects.create(name=name)
+        self.assertEqual(Client.objects.count(), len(self.client_names))
+
+
+class ClientTestCase(TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.client_names = ["web", "mobile", "cli"]
+        return super().setUpClass()
+
+    def test_create_clients(self):
+        Client.objects.all().delete()
+        self.assertEqual(Client.objects.count(), 0)
+        for name in self.client_names:
+            Client.objects.create(name=name)
+        self.assertEqual(Client.objects.count(), len(self.client_names))
+
+    def test_throttle_rate_validation_ok(self):
+        testclient = Client.objects.create(
+            name="test_throttle_rate_validation", throttle_rate="2/m"
+        )
+        testclient.full_clean()
+
+        self.assertIsNotNone(testclient.pk)
+        self.assertIsNotNone(testclient.token_ttl)
+        self.assertIsNotNone(testclient.throttle_rate)
+
+    def test_throttle_rate_validation_raises_exc(self):
+
+        with self.assertRaises(DjValidationError):
+            testclient1 = Client.objects.create(
+                name="testclient1", throttle_rate="blahblah"
+            )
+            testclient1.full_clean()
+            testclient1.delete()
+
+        with self.assertRaises(DjValidationError):
+            testclient2 = Client.objects.create(
+                name="testclient2",
+                throttle_rate="2/minute",
+            )
+            testclient2.full_clean()
+            testclient2.delete()
+
+
+class ExampleProjectViewsTestCase(CustomTestCase):
     def test_cached_api(self):
         self.assertEqual(AuthToken.objects.count(), 0)
         instance = AuthToken.objects.create(
@@ -356,4 +388,56 @@ class AuthTestCase(APITestCase):
             resp2.status_code,
             200,
             "token state was cached even though token has expired.",
+        )
+
+    def test_throttled_api_default_rate_429(self):
+        """
+        Default rate in example_project is: {"user_per_client": "2/m"}
+        """
+        self.assertEqual(AuthToken.objects.count(), 0)
+        instance = AuthToken.objects.create(self.user, self.authclient)
+        self.client.credentials(HTTP_AUTHORIZATION=("Token %s" % instance.token))
+
+        resp1 = self.client.get(throttled_view_url)
+        self.assertEqual(resp1.status_code, 200)
+
+        resp2 = self.client.get(throttled_view_url)
+        self.assertEqual(resp2.status_code, 200)
+
+        resp3 = self.client.get(throttled_view_url)
+        self.assertEqual(
+            resp3.status_code,
+            status.HTTP_429_TOO_MANY_REQUESTS,
+            msg="Third request within the minute gets throttled",
+        )
+
+    def test_throttled_api_custom_rate_429(self):
+        THROTTLE_NUM_REQUESTS = 5
+
+        testauthclient = Client.objects.create(
+            name="test_throttled_api_custom_rate_429",
+            throttle_rate="{0}/m".format(THROTTLE_NUM_REQUESTS),
+        )
+        instance = AuthToken.objects.create(self.user, testauthclient)
+        self.assertEqual(AuthToken.objects.count(), 1)
+
+        self.client.credentials(HTTP_AUTHORIZATION=("Token %s" % instance.token))
+
+        for _ in range(THROTTLE_NUM_REQUESTS):
+            resp = self.client.get(throttled_view_url)
+            self.assertEqual(resp.status_code, 200)
+
+        resp = self.client.get(throttled_view_url)
+        self.assertEqual(
+            resp.status_code,
+            status.HTTP_429_TOO_MANY_REQUESTS,
+            msg="6th request within the minute gets throttled",
+        )
+
+    def test_throttled_api_no_token_401(self):
+        resp = self.client.get(throttled_view_url)
+        self.assertEqual(
+            resp.status_code,
+            status.HTTP_401_UNAUTHORIZED,
+            msg="No token was set",
         )

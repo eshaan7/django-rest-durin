@@ -1,8 +1,9 @@
+from datetime import datetime
+
 from django.contrib.auth.signals import user_logged_in, user_logged_out
-from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import status
 from rest_framework.authtoken.serializers import AuthTokenSerializer
-from rest_framework.exceptions import ParseError
+from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.serializers import DateTimeField
@@ -16,7 +17,7 @@ from durin.settings import durin_settings
 class LoginView(APIView):
     """Durin's Login View.\n
     This view will return a JSON response when valid ``username``, ``password`` and
-    if not overwritten ``client`` fields are POSTed to the view using
+    (if not overwritten) ``client`` fields are POSTed to the view using
     form data or JSON.
 
     It uses the default serializer provided by
@@ -42,42 +43,46 @@ class LoginView(APIView):
         serializer.is_valid(raise_exception=True)
         return serializer.validated_data["user"]
 
-    @staticmethod
-    def get_client_obj(request) -> "Client":
+    def get_client_obj(self, request) -> "Client":
         """
         To get and return the associated :class:`durin.models.Client` object.
+
+        :raises rest_framework.exceptions.ValidationError
         """
         client_name = request.data.get("client", None)
         if not client_name:
-            raise ParseError("No client specified.", status.HTTP_400_BAD_REQUEST)
-        return Client.objects.get(name=client_name)
+            raise ValidationError({"detail": "No client specified."})
 
-    @classmethod
-    def get_token_obj(cls, request, client: "Client") -> "AuthToken":
+        try:
+            return Client.objects.get(name=client_name)
+        except Client.DoesNotExist:
+            raise ValidationError({"detail": "No client with that name."})
+
+    def get_token_obj(self, request, client: "Client") -> "AuthToken":
         """
         Flow used to return the :class:`durin.models.AuthToken` object.
         """
         try:
-            # a token for this user and client already exists, so we can just return it
+            # if a token for this user-client pair already exists,
+            # we can just return it
             token = AuthToken.objects.get(user=request.user, client=client)
             if durin_settings.REFRESH_TOKEN_ON_LOGIN:
-                cls.renew_token(token)
-        except ObjectDoesNotExist:
+                self.renew_token(request=request, token=token)
+        except AuthToken.DoesNotExist:
             # create new token
             token = AuthToken.objects.create(request.user, client)
 
         return token
 
-    @classmethod
-    def renew_token(cls, token_obj: "AuthToken") -> None:
+    def renew_token(self, request, token: "AuthToken") -> None:
         """
         How to renew the token instance in case
         ``settings.REFRESH_TOKEN_ON_LOGIN`` is set to ``True``.
         """
-        token_obj.renew_token(renewed_by=cls)
+        token.renew_token(request=request)
 
     @staticmethod
-    def format_expiry_datetime(expiry):
+    def format_expiry_datetime(expiry: "datetime") -> str:
         """
         To format the expiry ``datetime`` object at your convenience.
         """
@@ -90,7 +95,7 @@ class LoginView(APIView):
         """
         return durin_settings.USER_SERIALIZER
 
-    def get_post_response_data(self, request, token_obj: "AuthToken"):
+    def get_post_response_data(self, request, token_obj: "AuthToken") -> dict:
         """
         Override this to return a fully customized payload.
         """
@@ -131,16 +136,23 @@ class RefreshView(APIView):
     permission_classes = (IsAuthenticated,)
 
     @staticmethod
-    def format_expiry_datetime(expiry):
+    def format_expiry_datetime(expiry: "datetime") -> str:
         """
         To format the expiry ``datetime`` object at your convenience.
         """
         datetime_format = durin_settings.EXPIRY_DATETIME_FORMAT
         return DateTimeField(format=datetime_format).to_representation(expiry)
 
+    def renew_token(self, request, token: "AuthToken") -> "datetime":
+        """
+        How to renew the token instance.
+        """
+        new_expiry = token.renew_token(request=request)
+        return new_expiry
+
     def post(self, request, *args, **kwargs):
         auth_token = request._auth
-        new_expiry = auth_token.renew_token(renewed_by=self.__class__)
+        new_expiry = self.renew_token(request=request, token=auth_token)
         new_expiry_repr = self.format_expiry_datetime(new_expiry)
         return Response({"expiry": new_expiry_repr}, status=status.HTTP_200_OK)
 

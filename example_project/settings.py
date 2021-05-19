@@ -5,16 +5,27 @@ SECRET_KEY = "friend"  # http://tolkiengateway.net/wiki/Doors_of_Durin
 DEBUG = True
 ALLOWED_HOSTS = []
 INSTALLED_APPS = (
+    # default
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
+    "django.contrib.staticfiles",
+    # extra
     "memoize",
     "rest_framework",
-    "durin",
     "django_nose",
+    # project apps
+    "durin",
+    "example_project",
 )
+
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+REST_FRAMEWORK = {
+    "DEFAULT_THROTTLE_RATES": {"user_per_client": "2/m"},
+}
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
