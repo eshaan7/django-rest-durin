@@ -38,7 +38,7 @@ If your project uses an older verison of Django or Django Rest Framework, you ca
 
 | This Project | Python Version | Django Version     | Django Rest Framework |
 |--------------|----------------|--------------------|-----------------------|
-| 0.1.*        | 3.5 - 3.9      | 2.2, 3.0, 3.1, 3.2 | 3.7>=                 |
+| 0.1+         | 3.5 - 3.9      | 2.2, 3.0, 3.1, 3.2 | 3.7>=                 |
 
 Make sure to use at least `DRF 3.10` when using `Django 3.0` or newer.
 
