@@ -22,13 +22,13 @@ built in to DRF. However, it adds some extra sauce:
 - Durin allows **multiple tokens per user**. But only one token each user per API client.
 - Each user token is associated with an API Client. 
    - These API Clients are configurable via Django's Admin Interface. 
-   - Includes permission enforcing to allow only specific clients to make authenticated requests to certain `APIViews` or vice-a-versa.
-   - Configure Rate-Throttling_ per User <-> Client pair.
+   - Includes [permission enforcing](https://django-rest-durin.readthedocs.io/en/latest/permissions.html) to allow only specific clients to make authenticated requests to certain `APIViews` or vice-a-versa.
+   - Configure [Rate-Throttling](https://django-rest-durin.readthedocs.io/en/latest/throttling.html) per User <-> Client pair.
 - Durin provides an option for a logged in user to **remove all tokens** that the server has - forcing them to re-authenticate for all API clients.
 - Durin **tokens can be renewed** to get a fresh expiry.
 - Durin provides a `CachedTokenAuthentication` backend as well which uses memoization for faster look ups.
 
-More information can be found in the [Documentation](https://django-rest-durin.readthedocs.io/en/latest/installation.html).
+More information can be found in the [Documentation](https://django-rest-durin.readthedocs.io/en/latest/installation.html). I'd also recommend going through the `example_project/` included in this repository.
 
 ## Django Compatibility Matrix
 
