@@ -4,8 +4,8 @@ from django.views.generic.base import RedirectView
 
 from .views import (
     CachedRootView,
-    RestrictedAllowView,
-    RestrictedDisallowView,
+    NoWebClientView,
+    OnlyWebClientView,
     RootView,
     ThrottledView,
 )
@@ -18,13 +18,13 @@ urlpatterns = [
     re_path(r"^api/cached$", CachedRootView.as_view(), name="cached-auth-api"),
     re_path(r"^api/throttled$", ThrottledView.as_view(), name="throttled-api"),
     re_path(
-        r"^api/restricted_allow$",
-        RestrictedAllowView.as_view(),
-        name="restricted_allow-api",
+        r"^api/onlywebclient$",
+        OnlyWebClientView.as_view(),
+        name="onlywebclient-api",
     ),
     re_path(
-        r"^api/restrocted_disallow$",
-        RestrictedDisallowView.as_view(),
-        name="restricted_disallow-api",
+        r"^api/nowebclient$",
+        NoWebClientView.as_view(),
+        name="nowebclient-api",
     ),
 ]

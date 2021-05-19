@@ -32,23 +32,23 @@ class ThrottledView(_BaseAPIView):
         return Response("ThrottledView")
 
 
-class RestrictedAllowView(_BaseAPIView):
+class OnlyWebClientView(_BaseAPIView):
     """
     Only accessible to TEST_CLIENT_NAME
     """
 
-    permission_classes = (IsAuthenticated, CustomAllowSpecificClients)
+    permission_classes = (CustomAllowSpecificClients, IsAuthenticated)
 
     def get(self, request):
-        return Response("RestrictedAllowView")
+        return Response("OnlyWebClientView")
 
 
-class RestrictedDisallowView(_BaseAPIView):
+class NoWebClientView(_BaseAPIView):
     """
     Not accessible to TEST_CLIENT_NAME
     """
 
-    permission_classes = (IsAuthenticated, CustomDisallowSpecificClients)
+    permission_classes = (CustomDisallowSpecificClients, IsAuthenticated)
 
     def get(self, request):
-        return Response("RestrictedDisallowView")
+        return Response("NoWebClientView")

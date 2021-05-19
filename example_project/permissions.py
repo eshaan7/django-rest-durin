@@ -1,6 +1,6 @@
 from durin import permissions
 
-TEST_CLIENT_NAME = "testpermissionsclient"
+TEST_CLIENT_NAME = "web-browser-client-test"
 
 
 class CustomAllowSpecificClients(permissions.AllowSpecificClients):
