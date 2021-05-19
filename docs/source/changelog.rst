@@ -1,6 +1,37 @@
 Changelog
 ============
 
+`v0.2.0 <https://github.com/eshaan7/django-rest-durin/releases/tag/v0.2.0>`__
+--------------------------------------------------------------------------------
+
+**Breaking Changes:**
+
+- Replace ``django-memoize`` with ``django-cache-memoize`` package. Refer to updated :class:`durin.auth.CachedTokenAuthentication`. (Issue 13_)
+- Update arguments passed to durin's signals and remove ``providing_args`` argument (Django `deprecation notice <https://docs.djangoproject.com/en/dev/internals/deprecation/#deprecation-removed-in-4-0>`_). Please see updated :doc:`signals`.
+- The ``get_client_obj``, ``get_token_obj`` and ``renew_token`` member methods of :class:`durin.views.LoginView` are no longer ``staticmethod`` or ``classmethod``.
+
+**Features:**
+
+- :class:`durin.throttling.UserClientRateThrottle` throttle class. (Issue 9_)
+- ``ClientSettings`` model in `example_project`_. (Issue 14_)
+- ``renew_token`` method on :class:`durin.views.RefreshView` to enable easier extensibility.
+
+**Bug Fixes:**
+
+- Fix bug in ``AuthTokenAdminView`` ("save and continue editing" button was not working).
+- Exception handling was missing in ``get_client_obj`` member method of :class:`durin.views.LoginView`.
+
+**Other:**
+
+- Enable CI tests for Django 3.2.
+- Better document ``models.py`` and categorize modules in documentation.
+
+.. _9: https://github.com/Eshaan7/django-rest-durin/issues/9
+.. _13: https://github.com/Eshaan7/django-rest-durin/issues/13
+.. _14: https://github.com/Eshaan7/django-rest-durin/issues/14
+.. _example_project: https://github.com/Eshaan7/django-rest-durin/blob/main/example_project/models.py
+
+
 `v0.1.0 <https://github.com/eshaan7/django-rest-durin/releases/tag/v0.1.0>`__
 --------------------------------------------------------------------------------
 
