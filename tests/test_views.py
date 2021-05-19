@@ -2,15 +2,12 @@ import time
 from datetime import timedelta
 from importlib import reload
 
-from django.core.exceptions import ValidationError as DjValidationError
-from django.test import TestCase, override_settings
+from django.test import override_settings
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.serializers import DateTimeField
-from rest_framework.test import APIRequestFactory
 
 from durin import views
-from durin.auth import TokenAuthentication
 from durin.models import AuthToken, Client
 from durin.serializers import UserSerializer
 from durin.settings import durin_settings
@@ -30,7 +27,7 @@ throttled_view_url = reverse("throttled-api")
 new_settings = durin_settings.defaults.copy()
 
 
-class AuthTestCase(CustomTestCase):
+class AuthViewsTestCase(CustomTestCase):
     def test_create_tokens_for_users(self):
         AuthToken.objects.all().delete()
         self.assertEqual(AuthToken.objects.count(), 0)
@@ -184,20 +181,6 @@ class AuthTestCase(CustomTestCase):
             "tokens from other users should not be affected by logout all",
         )
 
-    def test_update_token_key(self):
-        self.assertEqual(AuthToken.objects.count(), 0)
-        self.assertEqual(Client.objects.count(), 1)
-        instance = AuthToken.objects.create(self.user, self.authclient)
-        rf = APIRequestFactory()
-        request = rf.get("/")
-        request.META = {"HTTP_AUTHORIZATION": "Token {}".format(instance.token)}
-        (auth_user, auth_token) = TokenAuthentication().authenticate(request)
-        self.assertEqual(
-            instance.token,
-            auth_token.token,
-        )
-        self.assertEqual(self.user, auth_user)
-
     def test_invalid_token_length_returns_401_code(self):
         invalid_token = "1" * (durin_settings.TOKEN_CHARACTER_LENGTH - 1)
         self.client.credentials(HTTP_AUTHORIZATION=("Token %s" % invalid_token))
@@ -329,47 +312,6 @@ class AuthTestCase(CustomTestCase):
         for name in self.client_names:
             Client.objects.create(name=name)
         self.assertEqual(Client.objects.count(), len(self.client_names))
-
-
-class ClientTestCase(TestCase):
-    @classmethod
-    def setUpClass(cls):
-        cls.client_names = ["web", "mobile", "cli"]
-        return super().setUpClass()
-
-    def test_create_clients(self):
-        Client.objects.all().delete()
-        self.assertEqual(Client.objects.count(), 0)
-        for name in self.client_names:
-            Client.objects.create(name=name)
-        self.assertEqual(Client.objects.count(), len(self.client_names))
-
-    def test_throttle_rate_validation_ok(self):
-        testclient = Client.objects.create(
-            name="test_throttle_rate_validation", throttle_rate="2/m"
-        )
-        testclient.full_clean()
-
-        self.assertIsNotNone(testclient.pk)
-        self.assertIsNotNone(testclient.token_ttl)
-        self.assertIsNotNone(testclient.throttle_rate)
-
-    def test_throttle_rate_validation_raises_exc(self):
-
-        with self.assertRaises(DjValidationError):
-            testclient1 = Client.objects.create(
-                name="testclient1", throttle_rate="blahblah"
-            )
-            testclient1.full_clean()
-            testclient1.delete()
-
-        with self.assertRaises(DjValidationError):
-            testclient2 = Client.objects.create(
-                name="testclient2",
-                throttle_rate="2/minute",
-            )
-            testclient2.full_clean()
-            testclient2.delete()
 
 
 class ExampleProjectViewsTestCase(CustomTestCase):
