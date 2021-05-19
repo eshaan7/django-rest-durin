@@ -26,7 +26,7 @@ from django.core.exceptions import ValidationError as DjValidationError
 from rest_framework.throttling import UserRateThrottle
 
 
-class UserClientRateThrottle(UserRateThrottle):
+class UserClientRateThrottle(UserRateThrottle):  # lgtm [py/missing-call-to-init]
     """
     Throttles requests by identifying the *authed* **user-client pair**.
 
