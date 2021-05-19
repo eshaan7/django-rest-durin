@@ -1,7 +1,6 @@
 """
 Durin provides a throttling class which make use of the
-:class:`durin.models.Client` and :class:`durin.models.ClientSettings`
-models it offers.
+:class:`durin.models.Client` model it offers.
 
 Usage is the same way as other
 `DRF throttling classes <https://django-rest-framework.org/api-guide/throttling/>`__.
@@ -20,7 +19,7 @@ Example ``settings.py``::
     default ``scope`` for the :class:`UserClientRateThrottle` class.
 
     The rate defined here serves as the default rate incase the
-    ``throttle_rate`` field on :class:`durin.models.ClientSettings` is ``null``.
+    ``throttle_rate`` field on :class:`durin.models.Client` is ``null``.
 """
 
 from django.core.exceptions import ValidationError as DjValidationError
@@ -88,7 +87,7 @@ class UserClientRateThrottle(UserRateThrottle):
     def validate_client_throttle_rate(rate):
         """
         Used for validating the :attr:`throttle_rate` field
-        on :class:`durin.models.ClientSettings`.
+        on :class:`durin.models.Client`.
 
         *For internal use only.*
         """

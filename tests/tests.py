@@ -16,7 +16,7 @@ from durin.serializers import UserSerializer
 from durin.settings import durin_settings
 from durin.signals import token_expired, token_renewed
 
-from . import CustomTestCase, User
+from . import CustomTestCase
 
 login_url = reverse("durin_login")
 logout_url = reverse("durin_logout")

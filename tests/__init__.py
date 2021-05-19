@@ -2,7 +2,7 @@ from django.contrib.auth import get_user_model
 from django.core.cache import cache as default_cache
 from rest_framework.test import APITestCase
 
-from durin.models import AuthToken, Client
+from durin.models import Client
 
 User = get_user_model()
 

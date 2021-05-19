@@ -1,6 +1,5 @@
 import binascii
 from os import urandom
-from typing import Union
 
 import humanize
 from django.conf import settings
@@ -24,6 +23,9 @@ def _create_token_string() -> str:
 class Client(models.Model):
     """
     Identifier to represent any API client/browser that consumes your RESTful API.
+
+    See ``example_project.models.ClientSettings``
+    if you wish to extend this model per your convenience.
     """
 
     #: A unique identification name for the client.
@@ -48,39 +50,6 @@ class Client(models.Model):
         ),
     )
 
-    def __str__(self):
-        td = humanize.naturaldelta(self.token_ttl)
-        return "({0}, {1})".format(self.name, td)
-
-    @property
-    def throttle_rate(self) -> Union[str, None]:
-        if hasattr(self, "settings"):
-            return self.settings.throttle_rate
-        else:
-            return None
-
-
-class ClientSettings(models.Model):
-    """
-    It is recommended to subclass this model (and not :py:class:`~Client`)
-    if you wish to add extra fields for storing any
-    configuration or settings against ``Client`` instances.
-
-    Reverse lookup: ``Client.settings``.
-
-    .. versionadded:: 0.2
-    """
-
-    #: `OneToOneField
-    #: <https://docs.djangoproject.com/en/3.2/topics/db/examples/one_to_one/>`__
-    #: with :py:class:`~Client` with ``on_delete=models.CASCADE``.
-    client = models.OneToOneField(
-        Client,
-        blank=False,
-        related_name="settings",
-        on_delete=models.CASCADE,
-    )
-
     #: Throttle rate for requests authed with this client.
     #:
     #: **Format**: ``number_of_requests/period``
@@ -88,6 +57,8 @@ class ClientSettings(models.Model):
     #: (same format as DRF's throttle rates)
     #:
     #: **Example**: ``100/h`` implies 100 requests each hour.
+    #:
+    #: .. versionadded:: 0.2
     throttle_rate = models.CharField(
         max_length=64,
         default="",
@@ -104,7 +75,8 @@ class ClientSettings(models.Model):
     )
 
     def __str__(self):
-        return "(rate: '{0}')".format(self.throttle_rate)
+        td = humanize.naturaldelta(self.token_ttl)
+        return "({0}, {1})".format(self.name, td)
 
 
 class AuthTokenManager(models.Manager):

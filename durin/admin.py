@@ -3,17 +3,6 @@ from django.contrib import admin
 from durin import models
 
 
-class ClientSettingsInlineAdmin(admin.StackedInline):
-    """
-    Django's StackedInline for :class:`ClientSettings` model.
-    """
-
-    model = models.ClientSettings
-
-    list_select_related = True
-    extra = 1
-
-
 @admin.register(models.AuthToken)
 class AuthTokenAdmin(admin.ModelAdmin):
     """Django's ModelAdmin for AuthToken.\n
@@ -76,12 +65,9 @@ class ClientAdmin(admin.ModelAdmin):
     Django's ModelAdmin for :class:`Client` model.
     """
 
-    inlines = [
-        ClientSettingsInlineAdmin,
-    ]
-
     list_display = (
         "id",
         "name",
         "token_ttl",
+        "throttle_rate",
     )
