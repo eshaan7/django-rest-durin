@@ -31,9 +31,9 @@ project = "Django-Rest-Durin"
 copyright = "2020, Eshaan Bansal"
 author = "Eshaan Bansal"
 
-version = "0.2.0"
+version = "0.3.0"
 # The full version, including alpha/beta/rc tags
-release = "v0.2.0"
+release = "v0.3.0"
 
 
 # -- General configuration ---------------------------------------------------

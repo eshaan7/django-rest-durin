@@ -1,6 +1,7 @@
 Changelog
 ============
 
+
 `v0.3.0 <https://github.com/eshaan7/django-rest-durin/releases/tag/v0.3.0>`__
 --------------------------------------------------------------------------------
 
@@ -10,9 +11,11 @@ Changelog
 
 **Other:**
 
+- More advanced use-cases in `example_project/permissions.py`_.
 - Test cases now cover the :doc:`permissions`.
 
 .. _16: https://github.com/Eshaan7/django-rest-durin/issues/16
+.. _example_project/permissions.py: https://github.com/Eshaan7/django-rest-durin/blob/main/example_project/permissions.py
 
 
 `v0.2.0 <https://github.com/eshaan7/django-rest-durin/releases/tag/v0.2.0>`__
