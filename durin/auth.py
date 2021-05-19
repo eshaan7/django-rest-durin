@@ -53,9 +53,20 @@ class TokenAuthentication(BaseAuthentication):
         """
         Verify that the given token exists in the database
         """
-        token = token.decode("utf-8")
+        token_str = token.decode("utf-8")
         try:
-            auth_token = AuthToken.objects.get(token=token)
+            # read settings
+            to_select = durin_settings.AUTHTOKEN_SELECT_RELATED_LIST
+
+            # get AuthToken object
+            if isinstance(to_select, list):
+                auth_token = AuthToken.objects.select_related(*to_select).get(
+                    token=token_str
+                )
+            else:
+                auth_token = AuthToken.objects.get(token=token_str)
+
+            # validate token
             if cls._cleanup_token(auth_token):
                 e = _("The given token has expired.")
                 raise exceptions.AuthenticationFailed(e)

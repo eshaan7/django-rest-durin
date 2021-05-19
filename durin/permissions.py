@@ -26,9 +26,9 @@ class AllowSpecificClients(BasePermission):
     allowed_clients_name = ()
 
     def has_permission(self, request, view):
-        if not hasattr(request, "_auth"):
+        if not request.auth:
             return False
-        return request._auth.client.name in self.allowed_clients_name
+        return request.auth.client.name in self.allowed_clients_name
 
 
 class DisallowSpecificClients(BasePermission):
@@ -41,6 +41,6 @@ class DisallowSpecificClients(BasePermission):
     disallowed_clients_name = ()
 
     def has_permission(self, request, view):
-        if not hasattr(request, "_auth"):
+        if not request.auth:
             return False
-        return request._auth.client.name not in self.disallowed_clients_name
+        return request.auth.client.name not in self.disallowed_clients_name

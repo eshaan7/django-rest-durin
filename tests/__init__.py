@@ -2,7 +2,7 @@ from django.contrib.auth import get_user_model
 from django.core.cache import cache as default_cache
 from rest_framework.test import APITestCase
 
-from durin.models import Client
+from durin.models import AuthToken, Client
 
 User = get_user_model()
 
@@ -11,6 +11,7 @@ class CustomTestCase(APITestCase):
     def setUp(self):
         # cleanup
         default_cache.clear()
+        AuthToken.objects.all().delete()
         Client.objects.all().delete()
         # setup
         self.authclient = Client.objects.create(name="authclientfortest")
