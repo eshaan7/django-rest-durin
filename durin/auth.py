@@ -10,7 +10,7 @@ from durin.signals import token_expired
 memoize = None
 
 try:
-    from memoize import memoize
+    from cache_memoize import cache_memoize as memoize
 except ImportError:
     pass
 
@@ -93,7 +93,7 @@ if memoize:
     class CachedTokenAuthentication(TokenAuthentication):
         """
         Similar to ``TokenAuthentication`` but uses
-        `django-memoize <https://pythonhosted.org/django-memoize/>`__
+        `django-cache-memoize <https://github.com/peterbe/django-cache-memoize>`__
         as cache backend for faster lookups.
 
         The cache timeout is configurable by setting the
@@ -101,13 +101,12 @@ if memoize:
 
         **How To Enable:**
 
-        1. Install django-memoize
+        1. Install django-cache-memoize
 
         .. parsed-literal::
-            pip install django-memoize
+            pip install django-cache-memoize
 
-        2. Add ``'memoize'`` to ``INSTALLED_APPS``.
-        3. Then you need to use ``CachedTokenAuthentication``
+        2. Then you need to use ``CachedTokenAuthentication``
            instead of ``TokenAuthentication``.
         """
 

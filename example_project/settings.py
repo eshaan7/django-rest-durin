@@ -13,7 +13,6 @@ INSTALLED_APPS = (
     "django.contrib.messages",
     "django.contrib.staticfiles",
     # extra
-    "memoize",
     "rest_framework",
     "django_nose",
     # project apps

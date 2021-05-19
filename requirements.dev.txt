@@ -3,6 +3,6 @@ humanize
 flake8
 django-nose
 coverage
-django-memoize
+django-cache-memoize
 isort
 pytest-django

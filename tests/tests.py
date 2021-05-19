@@ -376,13 +376,13 @@ class ExampleProjectViewsTestCase(CustomTestCase):
     def test_cached_api(self):
         self.assertEqual(AuthToken.objects.count(), 0)
         instance = AuthToken.objects.create(
-            self.user, self.authclient, delta_ttl=timedelta(seconds=2)
+            self.user, self.authclient, delta_ttl=timedelta(seconds=1)
         )
         self.client.credentials(HTTP_AUTHORIZATION=("Token %s" % instance.token))
         resp1 = self.client.get(cached_auth_url)
         self.assertEqual(resp1.status_code, 200)
-        time.sleep(2)
-        self.assertTrue(instance.has_expired, "token expiry was set to 2 seconds.")
+        time.sleep(3)
+        self.assertTrue(instance.has_expired, "token expiry was set to 1 second.")
         resp2 = self.client.get(cached_auth_url)
         self.assertEqual(
             resp2.status_code,
