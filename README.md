@@ -14,7 +14,7 @@ _For urgent issues and priority support, visit [https://xscode.com/eshaan7/djang
 
 Per API client token authentication Module for [Django REST Framework](http://www.django-rest-framework.org/).
 
-The idea is to provide one library that does token auth for multiple Web/CLI/Mobile API clients via one interface but allows different token configuration for each client.
+The idea is to provide one library that does token auth for multiple Web/CLI/Mobile API clients (i.e. devices/user-agents) via one interface but allows different token configuration for each client.
 
 Durin authentication is token based, similar to the `TokenAuthentication`
 built in to DRF. However, it adds some extra sauce:
