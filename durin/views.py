@@ -211,7 +211,7 @@ class LogoutAllView(APIView):
 
 
 class TokenSessionsViewSet(
-    mixins.DestroyModelMixin, mixins.ListModelMixin, GenericViewSet
+    mixins.ListModelMixin, mixins.DestroyModelMixin, GenericViewSet
 ):
     """Durin's TokenSessionsViewSet.\n
     - Returns list of active sessions of authed user.
@@ -236,7 +236,8 @@ class TokenSessionsViewSet(
 
     def perform_destroy(self, instance):
         """
-        Overwrite to prevent deletion of object against which current request was authed
+        Overwrite to prevent deletion of object
+        against which current request was authed.
         """
         if instance.pk == self.request.auth.pk:
             raise ValidationError(

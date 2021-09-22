@@ -15,6 +15,10 @@ class UserSerializer(rfs.ModelSerializer):
 
 
 class TokenSessionsSerializer(rfs.ModelSerializer):
+    """
+    Used in :class:`durin.views.TokenSessionsViewSet`.
+    """
+
     class Meta:
         model = AuthToken
         fields = [
@@ -48,6 +52,10 @@ class TokenSessionsSerializer(rfs.ModelSerializer):
 
 
 class APIAccessTokenSerializer(rfs.ModelSerializer):
+    """
+    Used in :class:`durin.views.APIAccessTokenView`.
+    """
+
     class Meta:
         model = AuthToken
         fields = [
@@ -73,6 +81,9 @@ class APIAccessTokenSerializer(rfs.ModelSerializer):
     expires_in_str = rfs.CharField(source="expires_in", read_only=True)
 
     def get_field_names(self, declared_fields, info):
+        """
+        :meta private:
+        """
         fields = super().get_field_names(declared_fields, info)
         if (
             durin_settings.API_ACCESS_RESPONSE_INCLUDE_TOKEN
@@ -84,6 +95,9 @@ class APIAccessTokenSerializer(rfs.ModelSerializer):
         return fields
 
     def create(self, validated_data):
+        """
+        :meta private:
+        """
         user = self.context["request"].user
         client_name = self.context["client_name"]
         if AuthToken.objects.filter(user=user, client__name=client_name).exists():
