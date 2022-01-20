@@ -1,8 +1,15 @@
+# ci
+codecov
+tox
+tox-gh-actions
+
+# lint
+black==20.8b1; python_version > '3.5'
+flake8==3.8.4; python_version > '3.5'
+pre-commit==2.9.2; python_version > '3.5'
+isort; python_version > '3.5'
+
+# project
 djangorestframework>=3.7.0
 humanize
-flake8
-django-nose
-coverage
 django-cache-memoize
-isort
-pytest-django

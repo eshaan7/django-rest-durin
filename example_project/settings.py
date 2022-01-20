@@ -14,7 +14,6 @@ INSTALLED_APPS = (
     "django.contrib.staticfiles",
     # extra
     "rest_framework",
-    "django_nose",
     # project apps
     "durin",
     "example_project",
@@ -73,5 +72,3 @@ USE_L10N = True
 USE_TZ = True
 
 STATIC_URL = "/static/"
-
-TEST_RUNNER = "django_nose.NoseTestSuiteRunner"
