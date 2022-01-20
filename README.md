@@ -27,7 +27,7 @@ built in to DRF. However, it adds some extra sauce:
 - Durin provides an option for a logged in user to **remove all tokens** that the server has - forcing them to re-authenticate for all API clients.
 - Durin **tokens can be renewed** to get a fresh expiry.
 - Durin provides a `CachedTokenAuthentication` backend as well which uses memoization for faster look ups.
-- Durin provides **Session Management** features. Refer to [Session Management Views](https://django-rest-durin.readthedocs.io/en/latest/views.html#Session-Management-Views) i.e.,
+- Durin provides **Session Management** features. Refer to [Session Management Views](https://django-rest-durin.readthedocs.io/en/latest/views.html#session-management-views) i.e.,
   - REST view for an authenticated user to get list of sessions (in context of django-rest-durin, this means `AuthToken` instances) and revoke a session. Useful for pages like "View active browser sessions".
   - REST view for an authenticated user to get/create/delete token against a pre-defined client. Useful for pages like "Get API key" where a user can get an API key to be able to interact directly with your project's RESTful API using cURL or a custom client.
 

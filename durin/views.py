@@ -206,7 +206,7 @@ class TokenSessionsViewSet(
     - Returns list of active sessions of authed user.
     - Only ``list()`` and ``delete()`` operations.
 
-    .. versionadded:: unreleased
+    .. versionadded:: 1.0.0
     """
 
     queryset = AuthToken.objects.select_related("client").all()
@@ -242,7 +242,7 @@ class APIAccessTokenView(APIView):
     - ``POST`` -> create and get token-client pair info
     - ``DELETE`` -> delete existing API access token
 
-    .. versionadded:: unreleased
+    .. versionadded:: 1.0.0
     """
 
     @property

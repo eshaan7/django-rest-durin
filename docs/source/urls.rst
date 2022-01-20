@@ -1,7 +1,7 @@
 URLs (``durin.urls``)
 ========================
 
-Durin provides a URL config ready with its 4 default views routed.
+Durin provides a URL config ready with its 6 default views routed.
 
 This can easily be included in your url config:
 
@@ -11,7 +11,7 @@ This can easily be included in your url config:
 
   urlpatterns = [
     #...snip...
-    url(r'api/auth/', include('durin.urls'))
+    re_path(r'api/auth/', include('durin.urls'))
     #...snip...
   ]
 
@@ -29,7 +29,7 @@ The views would then accessible as:
 
 they can also be looked up by name::
 
-    from django.urls import reverse
+    from rest_framework import reverse
 
     reverse('durin_login')
     reverse('durin_logout')

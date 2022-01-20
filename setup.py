@@ -19,7 +19,7 @@ GITHUB_URL = "https://github.com/eshaan7/django-rest-durin"
 setup(
     name="django-rest-durin",
     url=GITHUB_URL,
-    version="0.4.0",
+    version="1.0.0",
     license="MIT",
     description="""
     Per API client token authentication Module for django rest framework.

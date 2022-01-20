@@ -1,6 +1,28 @@
 Changelog
 ============
 
+`v1.0.0 <https://github.com/eshaan7/django-rest-durin/releases/tag/v1.0.0>`__
+--------------------------------------------------------------------------------
+
+.. Note::
+   If in your ``urls.py`` you have a url pattern with ``include("durin.urls"))``, then
+   2 new URL paths ``apiaccess/`` and ``sessions/`` will get added
+   to your project if you upgrade to this version.
+
+   If you do not wish to have these new views, remove the above include statement and 
+   refer to `durin/urls.py`_ on how to define the URL patterns selectively for the views you want.
+
+**Features:**
+
+- Session Management serializers and views. (Issue 19_)
+
+Refer to Session-Management-Views_ i.e.,
+   - REST view for an authenticated user to get list of sessions (in context of django-rest-durin, this means ``AuthToken`` instances) and revoke a session. Useful for pages like "View active browser sessions".
+   - REST view for an authenticated user to get/create/delete token against a pre-defined client. Useful for pages like "Get API key" where a user can get an API key to be able to interact directly with your project's RESTful API using cURL or a custom client.
+
+.. _19: https://github.com/Eshaan7/django-rest-durin/issues/19
+.. _Session-Management-Views: views.html#session-management-views
+.. _durin/urls.py: https://github.com/Eshaan7/django-rest-durin/blob/main/durin/urls.py
 
 `v0.4.0 <https://github.com/eshaan7/django-rest-durin/releases/tag/v0.4.0>`__
 --------------------------------------------------------------------------------
