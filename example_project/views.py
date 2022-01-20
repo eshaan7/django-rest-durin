@@ -2,37 +2,32 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from durin.auth import CachedTokenAuthentication, TokenAuthentication
+from durin.auth import CachedTokenAuthentication
 from durin.throttling import UserClientRateThrottle
 
 from .permissions import CustomAllowSpecificClients, CustomDisallowSpecificClients
 
 
-class _BaseAPIView(APIView):
-    authentication_classes = (TokenAuthentication,)
-    permission_classes = (IsAuthenticated,)
-
-
-class RootView(_BaseAPIView):
+class RootView(APIView):
     def get(self, request):
         return Response("api root")
 
 
-class CachedRootView(_BaseAPIView):
+class CachedRootView(APIView):
     authentication_classes = (CachedTokenAuthentication,)
 
     def get(self, request):
         return Response("cached api root")
 
 
-class ThrottledView(_BaseAPIView):
+class ThrottledView(APIView):
     throttle_classes = (UserClientRateThrottle,)
 
     def get(self, request):
         return Response("ThrottledView")
 
 
-class OnlyWebClientView(_BaseAPIView):
+class OnlyWebClientView(APIView):
     """
     Only accessible to TEST_CLIENT_NAME
     """
@@ -43,7 +38,7 @@ class OnlyWebClientView(_BaseAPIView):
         return Response("OnlyWebClientView")
 
 
-class NoWebClientView(_BaseAPIView):
+class NoWebClientView(APIView):
     """
     Not accessible to TEST_CLIENT_NAME
     """

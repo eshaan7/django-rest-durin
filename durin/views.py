@@ -4,12 +4,10 @@ from django.contrib.auth.signals import user_logged_in, user_logged_out
 from rest_framework import status
 from rest_framework.authtoken.serializers import AuthTokenSerializer
 from rest_framework.exceptions import ValidationError
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.serializers import DateTimeField
 from rest_framework.views import APIView
 
-from durin.auth import TokenAuthentication
 from durin.models import AuthToken, Client
 from durin.settings import durin_settings
 
@@ -132,9 +130,6 @@ class RefreshView(APIView):
     2. :meth:`durin.signals.token_renewed` is called.
     """
 
-    authentication_classes = (TokenAuthentication,)
-    permission_classes = (IsAuthenticated,)
-
     @staticmethod
     def format_expiry_datetime(expiry: "datetime") -> str:
         """
@@ -170,9 +165,6 @@ class LogoutView(APIView):
     :returns: 204 (No content)
     """
 
-    authentication_classes = (TokenAuthentication,)
-    permission_classes = (IsAuthenticated,)
-
     def post(self, request, *args, **kwargs):
         request._auth.delete()
         user_logged_out.send(
@@ -195,9 +187,6 @@ class LogoutAllView(APIView):
 
     :returns: 204 (No content)
     """
-
-    authentication_classes = (TokenAuthentication,)
-    permission_classes = (IsAuthenticated,)
 
     def post(self, request, *args, **kwargs):
         request.user.auth_token_set.all().delete()
