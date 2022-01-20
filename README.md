@@ -36,9 +36,9 @@ More information can be found in the [Documentation](https://django-rest-durin.r
 
 If your project uses an older verison of Django or Django Rest Framework, you can choose an older version of this project.
 
-| This Project | Python Version | Django Version     | Django Rest Framework |
-|--------------|----------------|--------------------|-----------------------|
-| 0.1+         | 3.5 - 3.9      | 2.2, 3.0, 3.1, 3.2 | 3.7>=                 |
+| This Project | Python Version | Django Version          | Django Rest Framework |
+|--------------|----------------|-------------------------|-----------------------|
+| 0.1+         | 3.5 - 3.10     | 2.2, 3.0, 3.1, 3.2, 4.0 | 3.7>=                 |
 
 Make sure to use at least `DRF 3.10` when using `Django 3.0` or newer.
 
@@ -54,4 +54,4 @@ This project is published with the [MIT License](LICENSE). See [https://chooseal
 
 ## Credits
 
-Durin is inpired by the [django-rest-knox](https://github.com/James1345/django-rest-knox) and [django-rest-multitokenauth](https://github.com/anexia-it/django-rest-multitokenauth) libraries and adopts some learnings, docs and code from both.
+Durin is inpired by the [django-rest-knox](https://github.com/James1345/django-rest-knox) and [django-rest-multitokenauth](https://github.com/anexia-it/django-rest-multitokenauth) libraries and adopts some learnings and code from both.
