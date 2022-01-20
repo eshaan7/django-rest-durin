@@ -12,6 +12,4 @@ isort
 # project
 djangorestframework>=3.7.0
 humanize
-django-nose
 django-cache-memoize
-pytest-django
