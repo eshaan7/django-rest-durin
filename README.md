@@ -9,7 +9,7 @@ _For urgent issues and priority support, visit [https://xscode.com/eshaan7/djang
 [![codecov](https://codecov.io/gh/Eshaan7/django-rest-durin/branch/main/graph/badge.svg?token=S9KEI0PU05)](https://codecov.io/gh/Eshaan7/django-rest-durin/)
 [![CodeFactor](https://www.codefactor.io/repository/github/eshaan7/django-rest-durin/badge)](https://www.codefactor.io/repository/github/eshaan7/django-rest-durin)
 <a href="https://lgtm.com/projects/g/Eshaan7/django-rest-durin/context:python">
-  <img alt="Language grade: Python" src="https://img.shields.io/lgtm/grade/python/g/Eshaan7/django-rest-durin.svg?logo=lgtm&logoWidth=18"/>
+<img alt="Language grade: Python" src="https://img.shields.io/lgtm/grade/python/g/Eshaan7/django-rest-durin.svg?logo=lgtm&logoWidth=18"/>
 </a>
 
 Per API client token authentication Module for [Django REST Framework](http://www.django-rest-framework.org/).
@@ -20,13 +20,16 @@ Durin authentication is token based, similar to the `TokenAuthentication`
 built in to DRF. However, it adds some extra sauce:
 
 - Durin allows **multiple tokens per user**. But only one token each user per API client.
-- Each user token is associated with an API Client. 
-   - These API Clients are configurable via Django's Admin Interface. 
-   - Includes [permission enforcing](https://django-rest-durin.readthedocs.io/en/latest/permissions.html) to allow only specific clients to make authenticated requests to certain `APIViews` or vice-a-versa.
-   - Configure [Rate-Throttling](https://django-rest-durin.readthedocs.io/en/latest/throttling.html) per User <-> Client pair.
+- Each user token is associated with an API Client.
+  - These API Clients are configurable via Django's Admin Interface.
+  - Includes [permission enforcing](https://django-rest-durin.readthedocs.io/en/latest/permissions.html) to allow only specific clients to make authenticated requests to certain `APIViews` or vice-a-versa.
+  - Configure [Rate-Throttling](https://django-rest-durin.readthedocs.io/en/latest/throttling.html) per User <-> Client pair.
 - Durin provides an option for a logged in user to **remove all tokens** that the server has - forcing them to re-authenticate for all API clients.
 - Durin **tokens can be renewed** to get a fresh expiry.
 - Durin provides a `CachedTokenAuthentication` backend as well which uses memoization for faster look ups.
+- Durin provides [**Session Management**](https://django-rest-durin.readthedocs.io/en/latest/views.html#Session-Management-Views) features i.e.,
+  - REST view for an authenticated user to get list of sessions (in context of django-rest-durin, this means `AuthToken` instances) and revoke a session. Useful for pages like "View active browser sessions".
+  - REST view for an authenticated user to get/create/delete token against a pre-defined client. Useful for pages like "Get API key" where a user can get an API key to be able to interact directly with your project's RESTful API using cURL or a custom client.
 
 More information can be found in the [Documentation](https://django-rest-durin.readthedocs.io/en/latest/installation.html). I'd also recommend going through the `example_project/` included in this repository.
 
@@ -37,7 +40,7 @@ More information can be found in the [Documentation](https://django-rest-durin.r
 If your project uses an older verison of Django or Django Rest Framework, you can choose an older version of this project.
 
 | This Project | Python Version | Django Version          | Django Rest Framework |
-|--------------|----------------|-------------------------|-----------------------|
+| ------------ | -------------- | ----------------------- | --------------------- |
 | 0.1+         | 3.5 - 3.10     | 2.2, 3.0, 3.1, 3.2, 4.0 | 3.7>=                 |
 
 Make sure to use at least `DRF 3.10` when using `Django 3.0` or newer.

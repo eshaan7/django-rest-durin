@@ -205,6 +205,8 @@ class TokenSessionsViewSet(
     """Durin's TokenSessionsViewSet.\n
     - Returns list of active sessions of authed user.
     - Only ``list()`` and ``delete()`` operations.
+
+    .. versionadded:: unreleased
     """
 
     queryset = AuthToken.objects.select_related("client").all()
@@ -235,7 +237,13 @@ class TokenSessionsViewSet(
 
 
 class APIAccessTokenView(APIView):
-    """Durin's APIAccessTokenView.\n"""
+    """Durin's APIAccessTokenView.\n
+    - ``GET`` -> get token-client pair info
+    - ``POST`` -> create and get token-client pair info
+    - ``DELETE`` -> delete existing API access token
+
+    .. versionadded:: unreleased
+    """
 
     @property
     def client_name(self) -> str:

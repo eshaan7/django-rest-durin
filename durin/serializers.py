@@ -17,6 +17,8 @@ class UserSerializer(rfs.ModelSerializer):
 class TokenSessionsSerializer(rfs.ModelSerializer):
     """
     Used in :class:`durin.views.TokenSessionsViewSet`.
+
+    .. versionadded:: unreleased
     """
 
     class Meta:
@@ -54,6 +56,8 @@ class TokenSessionsSerializer(rfs.ModelSerializer):
 class APIAccessTokenSerializer(rfs.ModelSerializer):
     """
     Used in :class:`durin.views.APIAccessTokenView`.
+
+    .. versionadded:: unreleased
     """
 
     class Meta:
