@@ -4,7 +4,7 @@ tox
 tox-gh-actions
 
 # lint
-black==20.8b1
+black==20.8b1; python_version > '3.5'
 flake8==3.8.4
 pre-commit==2.9.2
 isort
