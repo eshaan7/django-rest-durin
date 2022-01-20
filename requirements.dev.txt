@@ -1,8 +1,17 @@
+# ci
+codecov
+tox
+tox-gh-actions
+
+# lint
+black==20.8b1
+flake8==3.8.4
+pre-commit==2.9.2
+isort
+
+# project
 djangorestframework>=3.7.0
 humanize
-flake8
 django-nose
-coverage
 django-cache-memoize
-isort
 pytest-django
