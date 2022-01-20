@@ -24,14 +24,6 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.dev.txt
 
-    - name: "Test: Lint (flake8, black, isort)"
-      run: |
-        # stop the build if there are Python syntax errors or undefined names
-        flake8 . --count
-        black . --check
-        isort --check-only --diff setup.py durin example_project tests
-
-
     - name: "Test: tox tests"
       run: |
         # run tests with coverage
