@@ -8,9 +8,10 @@ Changelog
 **Breaking Changes:**
 
 - Remove the hard-coding of ``authentication_classes``, ``permission_classes`` variables in :doc:`views`. 
-  Meaning they will now use the defaults set under ``REST_FRAMEWORK`` in ``settings.py``
+  Meaning they will now use the defaults set under ``REST_FRAMEWORK`` in ``settings.py``.
   
 **Other:**
+
 - Support for Python 3.10. Enable CI tests for same.
 - Support for Django 4.0. Enable CI tests for same.
 
