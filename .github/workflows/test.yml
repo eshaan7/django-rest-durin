@@ -22,7 +22,6 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install tox tox-gh-actions flake8 codecov
         pip install -r requirements.dev.txt
 
     - name: "Test: Lint (flake8, black, isort)"
