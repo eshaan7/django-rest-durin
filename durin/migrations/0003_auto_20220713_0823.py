@@ -21,4 +21,4 @@ class Migration(migrations.Migration):
             name='token_ttl',
             field=models.DurationField(default=datetime.timedelta(days=14), help_text='\n            Token Time To Live (TTL) in timedelta. Format: <code>DAYS HH:MM:SS</code>.\n            ', verbose_name='Token Time To Live (TTL)'),
         ),
-    ]ad
+    ]
