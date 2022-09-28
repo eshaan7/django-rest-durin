@@ -1,9 +1,10 @@
 
 [run]
 branch = True
-source = django-rest-durin
-omit = 
-    durin/models.py
+parallel = true
+source =
+    durin
+    tests
 
 [report]
 exclude_lines =
@@ -12,5 +13,3 @@ exclude_lines =
     raise NotImplementedError
     if __name__ == .__main__.:
 ignore_errors = True
-omit =
-    tests/*
