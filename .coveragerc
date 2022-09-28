@@ -1,7 +1,10 @@
 
 [run]
 branch = True
-source = django-rest-durin
+parallel = true
+source =
+    durin
+    tests
 omit = 
     durin/models.py
 
