@@ -46,8 +46,7 @@ class AuthTokenAdmin(admin.ModelAdmin):
                     },
                 ),
             ]
-        else:
-            return super().get_fieldsets(request, obj)
+        return super().get_fieldsets(request, obj)
 
     def has_change_permission(self, request, obj=None):
         """

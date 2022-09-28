@@ -166,8 +166,7 @@ class AuthToken(models.Model):
         if self.expiry:
             td = self.expiry - self.created
             return humanize.naturaldelta(td)
-        else:
-            return "N/A"
+        return "N/A"
 
     @property
     def has_expired(self) -> bool:
