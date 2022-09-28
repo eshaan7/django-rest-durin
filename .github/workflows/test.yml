@@ -29,5 +29,9 @@ jobs:
         # run tests with coverage
         tox
 
-    - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v1
+    - name: Report test coverage to DeepSource
+      uses: deepsourcelabs/test-coverage-action@master
+      with:
+        key: python
+        coverage-file: ./coverage.xml
+        dsn: ${{ secrets.DEEPSOURCE_DSN }}
