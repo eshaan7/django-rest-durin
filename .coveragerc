@@ -5,8 +5,6 @@ parallel = true
 source =
     durin
     tests
-omit = 
-    durin/models.py
 
 [report]
 exclude_lines =
