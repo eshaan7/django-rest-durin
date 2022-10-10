@@ -250,7 +250,9 @@ class APIAccessTokenView(APIView):
         client_name = getattr(durin_settings, "API_ACCESS_CLIENT_NAME", None)
         # verify/ asssert
         if not client_name:
-            raise AssertionError("setting `API_ACCESS_CLIENT_NAME` must be set to use this.")
+            raise AssertionError(
+                "setting `API_ACCESS_CLIENT_NAME` must be set to use this."
+            )
         return client_name
 
     def get_serializer(self, *args, **kwargs):
