@@ -110,3 +110,17 @@ class APIAccessTokenSerializer(rfs.ModelSerializer):
         validated_data["user"] = user
         validated_data["client"] = Client.objects.get(name=client_name)
         return super().create(validated_data)
+
+
+class ClientSerializer(rfs.ModelSerializer):
+    """
+    Used in :class:`durin.management.commands.create_client.Command`.
+    """
+
+    class Meta:
+        model = Client
+        fields = [
+            "name",
+            "token_ttl",
+            "throttle_rate",
+        ]
