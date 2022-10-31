@@ -1,6 +1,22 @@
 Changelog
 ============
 
+
+`v1.1.0 <https://github.com/eshaan7/django-rest-durin/releases/tag/v1.1.0>`__
+--------------------------------------------------------------------------------
+
+**Features:**
+
+- New ``ClientSerializer`` class.
+- New Django management command ``create_client``. (Issue 6_)
+
+**Other:**
+
+- Bunch of small fixes and refactor.
+
+.. _6: https://github.com/Eshaan7/django-rest-durin/issues/6
+
+
 `v1.0.0 <https://github.com/eshaan7/django-rest-durin/releases/tag/v1.0.0>`__
 --------------------------------------------------------------------------------
 
@@ -23,6 +39,7 @@ Refer to Session-Management-Views_ i.e.,
 .. _19: https://github.com/Eshaan7/django-rest-durin/issues/19
 .. _Session-Management-Views: views.html#session-management-views
 .. _durin/urls.py: https://github.com/Eshaan7/django-rest-durin/blob/main/durin/urls.py
+
 
 `v0.4.0 <https://github.com/eshaan7/django-rest-durin/releases/tag/v0.4.0>`__
 --------------------------------------------------------------------------------
