@@ -20,6 +20,11 @@ def _create_token_string() -> str:
     ).decode()
 
 
+def get_DEFAULT_TOKEN_TTL():
+    """Default token TTL value."""
+    return durin_settings.DEFAULT_TOKEN_TTL
+
+
 class Client(models.Model):
     """
     Identifier to represent any API client/browser that consumes your RESTful API.
@@ -41,7 +46,7 @@ class Client(models.Model):
     #: Token Time To Live (TTL) in timedelta. Format: ``DAYS HH:MM:SS``.
     token_ttl = models.DurationField(
         null=False,
-        default=durin_settings.DEFAULT_TOKEN_TTL,
+        default=get_DEFAULT_TOKEN_TTL,
         verbose_name=_("Token Time To Live (TTL)"),
         help_text=_(
             """
